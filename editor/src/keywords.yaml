@@ -1,0 +1,5628 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# FasterBASIC Keyword Reference
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# This file is the authoritative keyword reference for the Ed editor.
+# When a user invokes Go-to-Definition (F12 / right-click) on a keyword,
+# the editor displays the usage information from this file in the terminal.
+#
+# Format:
+#   Each keyword entry has:
+#     desc:   One-line description
+#     usage:  Syntax / usage pattern(s), one per line
+#     category: Grouping for organisation
+#
+# Maintain alphabetical order within each category block.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Control Flow
+# ═══════════════════════════════════════════════════════════════════════════════
+
+CASE:
+  category: control_flow
+  desc: "Introduces a value to match in a SELECT CASE block"
+  usage: |
+    SELECT CASE expression
+      CASE value
+        statements
+      CASE value1, value2
+        statements
+      CASE value1 TO value2
+        statements
+      CASE IS > value
+        statements
+      CASE OTHERWISE
+        statements
+    ENDCASE
+
+DO:
+  category: control_flow
+  desc: "Begins a DO...LOOP block"
+  usage: |
+    DO
+      statements
+    LOOP
+    DO
+      statements
+    LOOP WHILE condition
+    DO
+      statements
+    LOOP UNTIL condition
+
+  example: |
+    DIM n AS INTEGER
+    n = 1
+    DO
+        PRINT n
+        INC n
+    LOOP WHILE n <= 5
+    ' Also works with UNTIL:
+    DIM x AS INTEGER
+    x = 10
+    DO
+        PRINT x
+        DEC x, 3
+    LOOP UNTIL x <= 0
+
+
+DONE:
+  category: control_flow
+  desc: "Marks the end of a block (alternative to LOOP/WEND)"
+  usage: |
+    REPEAT
+      statements
+    DONE
+
+ELSE:
+  category: control_flow
+  desc: "Introduces the alternative branch of an IF statement"
+  usage: |
+    IF condition THEN
+      statements
+    ELSE
+      statements
+    END IF
+
+ELSEIF:
+  category: control_flow
+  desc: "Introduces an additional conditional branch"
+  usage: |
+    IF condition THEN
+      statements
+    ELSEIF condition THEN
+      statements
+    ELSE
+      statements
+    END IF
+
+END:
+  category: control_flow
+  desc: "Terminates the program, or closes a block (END IF, END SUB, etc.)"
+  usage: |
+    END
+    END IF
+    END SUB
+    END FUNCTION
+    END TYPE
+    END CLASS
+    END WORKER
+    END SELECT
+
+ENDCASE:
+  category: control_flow
+  desc: "Closes a SELECT CASE block"
+  usage: |
+    SELECT CASE x
+      CASE 1
+        PRINT "one"
+    ENDCASE
+
+ENDIF:
+  category: control_flow
+  desc: "Closes a multi-line IF block (alternative to END IF)"
+  usage: |
+    IF condition THEN
+      statements
+    ENDIF
+
+ENDMATCH:
+  category: control_flow
+  desc: "Closes a MATCH TYPE or MATCH RECEIVE block (one-word alternative to END MATCH)"
+  usage: |
+    MATCH TYPE E
+        CASE INTEGER n%
+            PRINT n%
+        CASE STRING s$
+            PRINT s$
+    ENDMATCH
+    ' ENDMATCH and END MATCH are interchangeable.
+
+EXIT:
+  category: control_flow
+  desc: "Exits the current loop, SUB, or FUNCTION early"
+  usage: |
+    EXIT FOR
+    EXIT WHILE
+    EXIT DO
+    EXIT REPEAT
+    EXIT SUB
+    EXIT FUNCTION
+    EXIT WORKER
+
+  example: |
+    ' EXIT FOR — leave a loop early:
+    FOR i = 1 TO 10
+        IF i = 4 THEN EXIT FOR
+        PRINT i
+    NEXT i
+    ' EXIT WHILE:
+    DIM n AS INTEGER
+    n = 0
+    WHILE 1 = 1
+        INC n
+        IF n >= 3 THEN EXIT WHILE
+        PRINT n
+    WEND
+    PRINT "Exited at n = "; n
+
+
+FOR:
+  category: control_flow
+  desc: "Begins a counted FOR...NEXT loop, FOR creates its own"
+  usage: |
+    FOR variable = start TO end
+      statements
+    NEXT variable
+    FOR variable = start TO end STEP increment
+      statements
+    NEXT variable
+    FOR EACH item IN collection
+      statements
+    NEXT item
+
+  example: |
+    FOR i = 1 TO 5
+        PRINT i
+    NEXT i
+    ' Count down with STEP:
+    FOR i = 10 TO 1 STEP -2
+        PRINT i
+    NEXT i
+
+
+EACH:
+  category: control_flow
+  desc: "Used with FOR to iterate over each element in a collection"
+  usage: |
+    FOR EACH item IN myList
+      PRINT item
+    NEXT item
+
+  example: |
+    DIM fruits AS LIST OF STRING
+    fruits.APPEND("apple")
+    fruits.APPEND("banana")
+    fruits.APPEND("cherry")
+    FOR EACH item$ IN fruits
+        PRINT item$
+    NEXT item$
+
+
+GOSUB:
+  category: control_flow
+  desc: "Branches to a labelled subroutine; RETURN jumps back"
+  usage: |
+    GOSUB MyLabel
+    ...
+    MyLabel:
+      statements
+      RETURN
+
+  example: |
+    PRINT "Before subroutine"
+    GOSUB Greet
+    PRINT "After subroutine"
+    END
+
+    Greet:
+        PRINT "Hello from GOSUB!"
+        RETURN
+
+
+GOTO:
+  category: control_flow
+  desc: "Unconditional jump to a labelled line"
+  usage: |
+    GOTO MyLabel
+    ...
+    MyLabel:
+      statements
+
+IF:
+  category: control_flow
+  desc: "Conditional execution"
+  usage: |
+    IF condition THEN statement
+    IF condition THEN
+      statements
+    END IF
+    IF condition THEN
+      statements
+    ELSE
+      statements
+    END IF
+    IF condition THEN
+      statements
+    ELSEIF condition THEN
+      statements
+    ELSE
+      statements
+    END IF
+
+  example: |
+    DIM score AS INTEGER
+    score = 72
+    IF score >= 90 THEN
+        PRINT "A"
+    ELSEIF score >= 80 THEN
+        PRINT "B"
+    ELSEIF score >= 70 THEN
+        PRINT "C"
+    ELSE
+        PRINT "Below C"
+    END IF
+
+
+IN:
+  category: control_flow
+  desc: "Used with FOR EACH to specify the collection to iterate"
+  usage: |
+    FOR EACH item IN myList
+      PRINT item
+    NEXT item
+
+  example: |
+    DIM names AS LIST OF STRING
+    APPEND names, "Alice" : APPEND names, "Bob"
+    FOR EACH n IN names
+        PRINT n
+    NEXT n
+
+IS:
+  category: control_flow
+  desc: "Used in SELECT CASE for comparison operators"
+  usage: |
+    SELECT CASE score
+      CASE IS >= 90
+        PRINT "A"
+      CASE IS >= 80
+        PRINT "B"
+    ENDCASE
+
+  example: |
+    DIM x = 75
+    SELECT CASE x
+        CASE IS >= 90 : PRINT "A"
+        CASE IS >= 80 : PRINT "B"
+        CASE IS >= 70 : PRINT "C"
+        CASE ELSE     : PRINT "F"
+    END SELECT
+
+LOOP:
+  category: control_flow
+  desc: "Closes a DO...LOOP block, optionally with WHILE/UNTIL condition"
+  usage: |
+    DO
+      statements
+    LOOP
+    DO
+      statements
+    LOOP WHILE condition
+    DO
+      statements
+    LOOP UNTIL condition
+
+  example: |
+    DIM i AS INTEGER = 1
+    DO
+        PRINT i
+        i = i + 1
+    LOOP WHILE i <= 3
+
+MATCH:
+  category: control_flow
+  desc: "Type-dispatching pattern match — MATCH TYPE on a variable, or MATCH RECEIVE for worker messages"
+  usage: |
+    ' ── MATCH TYPE: dispatch on the runtime type of a variable ──────────────
+    MATCH TYPE expression
+        CASE INTEGER n%
+            statements
+        CASE LONG n&
+            statements
+        CASE DOUBLE f#
+            statements
+        CASE STRING s$
+            statements
+        CASE LIST sub
+            statements
+        CASE OBJECT obj         ' catches any class instance
+            statements
+        CASE ClassName varname  ' specific class or UDT name
+            statements
+        CASE ELSE               ' default fallback (optional)
+            statements
+    END MATCH
+
+    ' ── MATCH RECEIVE: pop and dispatch a typed worker message ───────────────
+    MATCH RECEIVE(workerHandle)
+        CASE DOUBLE tick
+            statements
+        CASE INTEGER n%
+            statements
+        CASE STRING s$
+            statements
+        CASE UdtTypeName binding
+            statements
+        CASE ClassName varname
+            statements
+        CASE ELSE
+            statements
+    END MATCH
+
+  example: |
+    DIM val AS OBJECT = 42
+    MATCH TYPE val
+        CASE INTEGER n
+            PRINT "It's an integer: "; n
+        CASE STRING s
+            PRINT "It's a string: "; s
+        CASE ELSE
+            PRINT "Other type"
+    END MATCH
+
+NEXT:
+  category: control_flow
+  desc: "Closes a FOR loop and advances the loop variable"
+  usage: |
+    FOR i = 1 TO 10
+      PRINT i
+    NEXT i
+
+  example: |
+    FOR i = 1 TO 3
+        PRINT i;
+    NEXT i
+
+OF:
+  category: control_flow
+  desc: "Used with collection types (LIST OF)"
+  usage: |
+    DIM names AS LIST OF STRING
+
+  example: |
+    DIM numbers AS LIST OF INTEGER
+    APPEND numbers, 10
+    PRINT numbers(1)
+
+ON:
+  category: control_flow
+  desc: "Computed GOTO/GOSUB based on an expression value"
+  usage: |
+    ON expression GOTO label1, label2, label3
+    ON expression GOSUB label1, label2, label3
+
+  example: |
+    DIM choice = 2
+    ON choice GOTO Label1, Label2
+    END
+    Label1: PRINT "Option 1" : END
+    Label2: PRINT "Option 2" : END
+
+ONEVENT:
+  category: control_flow
+  desc: "Registers an event handler for timed or input events"
+  usage: |
+    ONEVENT handler_sub
+
+  example: |
+    SUB Alert() : PRINT "!" : END SUB
+    ONEVENT Alert
+
+OTHERWISE:
+  category: control_flow
+  desc: "Default case in SELECT CASE or MATCH when no other case matches"
+  usage: |
+    SELECT CASE x
+      CASE 1
+        PRINT "one"
+      CASE OTHERWISE
+        PRINT "other"
+    ENDCASE
+
+  example: |
+    DIM status = 2
+    SELECT CASE status
+        CASE 1 : PRINT "Red"
+        CASE OTHERWISE : PRINT "Default"
+    END SELECT
+
+REPEAT:
+  category: control_flow
+  desc: "Begins a REPEAT...UNTIL loop (executes at least once)"
+  usage: |
+    REPEAT
+      statements
+    UNTIL condition
+
+  example: |
+    DIM i = 1
+    REPEAT
+        PRINT i
+        i = i + 1
+    UNTIL i > 5
+
+  example: |
+    DIM n AS INTEGER
+    n = 1
+    REPEAT
+        PRINT n
+        INC n
+    UNTIL n > 5
+
+
+RETURN:
+  category: control_flow
+  desc: "Returns from a GOSUB subroutine, or returns a value from FUNCTION"
+  usage: |
+    GOSUB MyLabel
+    ...
+    MyLabel:
+      statements
+      RETURN
+
+SELECT:
+  category: control_flow
+  desc: "Begins a SELECT CASE multi-way branch"
+  usage: |
+    SELECT CASE expression
+      CASE value1
+        statements
+      CASE value2
+        statements
+      CASE OTHERWISE
+        statements
+    ENDCASE
+
+  example: |
+    DIM day AS INTEGER
+    day = 3
+    SELECT CASE day
+        CASE 1
+            PRINT "Monday"
+        CASE 2
+            PRINT "Tuesday"
+        CASE 3
+            PRINT "Wednesday"
+        CASE 4, 5
+            PRINT "Thu or Fri"
+        CASE 6 TO 7
+            PRINT "Weekend"
+        CASE OTHERWISE
+            PRINT "Unknown"
+    ENDCASE
+
+
+STEP:
+  category: control_flow
+  desc: "Specifies the increment in a FOR loop"
+  usage: |
+    FOR i = 10 TO 1 STEP -1
+      PRINT i
+    NEXT i
+
+STOP:
+  category: control_flow
+  desc: "Halts program execution (breakpoint / debug stop)"
+  usage: |
+    STOP
+
+THEN:
+  category: control_flow
+  desc: "Introduces the body of an IF statement"
+  usage: |
+    IF condition THEN
+      statements
+    END IF
+    IF condition THEN statement
+
+TO:
+  category: control_flow
+  desc: "Specifies the end value in a FOR loop or CASE range"
+  usage: |
+    FOR i = 1 TO 100
+      PRINT i
+    NEXT i
+    CASE 1 TO 10
+
+UNTIL:
+  category: control_flow
+  desc: "Loop termination condition for REPEAT or DO loops"
+  usage: |
+    REPEAT
+      statements
+    UNTIL condition
+    DO
+      statements
+    LOOP UNTIL condition
+
+  example: |
+    DIM x = 0
+    REPEAT
+        x = x + 1
+        PRINT x
+    UNTIL x >= 3
+
+WEND:
+  category: control_flow
+  desc: "Closes a WHILE...WEND loop"
+  usage: |
+    WHILE condition
+      statements
+    WEND
+
+  example: |
+    DIM n = 5
+    WHILE n > 0
+        PRINT n
+        n = n - 1
+    WEND
+
+WHEN:
+  category: control_flow
+  desc: "Introduces a case arm in a SELECT CASE block (alternative to CASE)"
+  usage: |
+    SELECT CASE x
+        WHEN 1
+            PRINT "one"
+        WHEN 2, 3
+            PRINT "two or three"
+        WHEN 4 TO 9
+            PRINT "four to nine"
+        CASE OTHERWISE
+            PRINT "other"
+    ENDCASE
+
+WHILE:
+  category: control_flow
+  desc: "Begins a WHILE...WEND loop (tests condition before each iteration)"
+  usage: |
+    WHILE condition
+      statements
+    WEND
+
+  example: |
+    DIM n AS INTEGER
+    n = 1
+    WHILE n <= 5
+        PRINT n
+        INC n
+    WEND
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Exception Handling
+# ═══════════════════════════════════════════════════════════════════════════════
+
+CATCH:
+  category: exception
+  desc: "Catches an exception thrown inside a TRY block"
+  usage: |
+    TRY
+      statements
+    CATCH
+      PRINT "Error: "; ERR
+    FINALLY
+      ' cleanup
+    END TRY
+
+  example: |
+    TRY
+        OPEN "not-found.txt" FOR INPUT AS #1
+    CATCH
+        PRINT "File not found error caught"
+    END TRY
+
+FINALLY:
+  category: exception
+  desc: "Code that always runs after TRY/CATCH, whether or not an error occurred"
+  usage: |
+    TRY
+      statements
+    CATCH
+      PRINT ERR
+    FINALLY
+      CLOSE #1
+    END TRY
+
+  example: |
+    TRY
+        OPEN "log.txt" FOR OUTPUT AS #1
+        PRINT #1, "Operation log"
+    CATCH
+        PRINT "Log write failed"
+    FINALLY
+        CLOSE #1  ' Guaranteed to close
+    END TRY
+
+THROW:
+  category: exception
+  desc: "Raises a runtime error that can be caught by TRY/CATCH"
+  usage: |
+    THROW "Something went wrong"
+    THROW error_code
+
+  example: |
+    SUB CheckAge(age AS INTEGER)
+        IF age < 0 THEN THROW "Age cannot be negative"
+        PRINT "Age is "; age
+    END SUB
+    TRY
+        CheckAge(25)
+        CheckAge(-1)
+    CATCH
+        PRINT "Error: "; ERR
+    END TRY
+
+
+ERR:
+  category: exception
+  desc: "Returns the error number of the most recent runtime error"
+  usage: |
+    TRY
+      ' risky operation
+    CATCH
+      PRINT "Error code: "; ERR
+    END TRY
+
+  example: |
+    TRY
+        ' Simulate out of memory or similar
+        ERROR 7
+    CATCH
+        IF ERR = 7 THEN PRINT "Error 7 caught"
+    END TRY
+
+ERL:
+  category: exception
+  desc: "Returns the line number where the most recent runtime error occurred"
+  usage: |
+    TRY
+      ' risky operation
+    CATCH
+      PRINT "Error at line "; ERL
+    END TRY
+
+  example: |
+    TRY
+        PRINT 1/0
+    CATCH
+        PRINT "Error at line: "; ERL
+    END TRY
+
+ERROR:
+  category: exception
+  desc: "Raises a runtime error with the specified error code"
+  usage: |
+    ERROR 5
+    ERROR errcode
+
+  example: |
+    DIM MY_ERROR AS INTEGER = 123
+    IF problem THEN ERROR MY_ERROR
+
+TRY:
+  category: exception
+  desc: "Begins a protected block; errors are caught by CATCH"
+  usage: |
+    TRY
+      statements
+    CATCH
+      PRINT "Error: "; ERR
+    END TRY
+
+  example: |
+    TRY
+        PRINT "Trying risky code..."
+        THROW "Something went wrong"
+    CATCH
+        PRINT "Caught error: "; ERR
+    FINALLY
+        PRINT "Finally block always runs"
+    END TRY
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Functions & Procedures
+# ═══════════════════════════════════════════════════════════════════════════════
+
+CALL:
+  category: procedure
+  desc: "Explicitly calls a SUB procedure"
+  usage: |
+    CALL MySub(arg1, arg2)
+
+DEF:
+  category: procedure
+  desc: "Defines an inline function (DEF FN)"
+  usage: |
+    DEF FN Square(x) = x * x
+    DEF FN Cube(x AS INTEGER) AS INTEGER = x * x * x
+
+  example: |
+    DEF FN Square(x) = x * x
+    DEF FN Cube(x AS DOUBLE) AS DOUBLE = x * x * x
+
+    PRINT FN Square(4)       ' 16
+    PRINT FN Cube(3.0)       ' 27
+
+
+ENDSUB:
+  category: procedure
+  desc: "Closes a SUB block (alternative to END SUB)"
+  usage: |
+    SUB MyProc()
+      statements
+    ENDSUB
+
+ENDFUNCTION:
+  category: procedure
+  desc: "Closes a FUNCTION block (alternative to END FUNCTION)"
+  usage: |
+    FUNCTION MyFunc() AS INTEGER
+      MyFunc = 42
+    ENDFUNCTION
+
+FN:
+  category: procedure
+  desc: "Used with DEF to define an inline function"
+  usage: |
+    DEF FN Double(x) = x * 2
+    result = FN Double(21)
+
+FUNCTION:
+  category: procedure
+  desc: "Declares a function that returns a value"
+  usage: |
+    FUNCTION name(params) AS ReturnType
+      statements
+      name = return_value
+    END FUNCTION
+    FUNCTION Add(a AS INTEGER, b AS INTEGER) AS INTEGER
+      Add = a + b
+    END FUNCTION
+
+  example: |
+    FUNCTION Add(a AS INTEGER, b AS INTEGER) AS INTEGER
+        Add = a + b
+    END FUNCTION
+
+    FUNCTION Factorial(n AS INTEGER) AS INTEGER
+        IF n <= 1 THEN
+            Factorial = 1
+        ELSE
+            Factorial = n * Factorial(n - 1)
+        END IF
+    END FUNCTION
+
+    PRINT Add(3, 4)          ' 7
+    PRINT Factorial(5)       ' 120
+
+
+SUB:
+  category: procedure
+  desc: "Declares a subroutine (procedure that does not return a value)"
+  usage: |
+    SUB name(params)
+      statements
+    END SUB
+    SUB Greet(name$ AS STRING)
+      PRINT "Hello, "; name$
+    END SUB
+
+  example: |
+    SUB Greet(name AS STRING)
+        PRINT "Hello, "; name; "!"
+    END SUB
+
+    SUB PrintLine(ch AS STRING, count AS INTEGER)
+        DIM i AS INTEGER
+        FOR i = 1 TO count
+            WRCH ch
+        NEXT i
+        PRINT ""
+    END SUB
+
+    Greet("World")
+    Greet("FasterBASIC")
+    PrintLine("-", 20)
+
+
+IIF:
+  category: procedure
+  desc: "Inline IF — returns one of two values based on a condition"
+  usage: |
+    result = IIF(condition, true_value, false_value)
+    msg$ = IIF(score >= 50, "Pass", "Fail")
+
+  example: |
+    DIM score AS INTEGER
+    score = 73
+    PRINT IIF(score >= 50, "Pass", "Fail")   ' Pass
+
+    DIM x AS INTEGER
+    x = -5
+    PRINT IIF(x >= 0, x, -x)                ' 5  (absolute value)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Parameter Passing
+# ═══════════════════════════════════════════════════════════════════════════════
+
+AS:
+  category: declaration
+  desc: "Specifies the type of a variable, parameter, or function return"
+  usage: |
+    DIM x AS INTEGER
+    DIM name$ AS STRING
+    FUNCTION Calc(n AS DOUBLE) AS DOUBLE
+    SUB Process(data AS STRING)
+
+  example: |
+    DIM count AS INTEGER
+    DIM message AS STRING = "Status: "
+    count = 10
+    PRINT message; count
+
+BYREF:
+  category: declaration
+  desc: "Pass parameter by reference (callee can modify the original variable)"
+  usage: |
+    SUB Increment(BYREF x AS INTEGER)
+      x = x + 1
+    END SUB
+
+  example: |
+    SUB DoubleIt(BYREF n AS INTEGER)
+        n = n * 2
+    END SUB
+    DIM x = 5
+    DoubleIt(x)
+    PRINT x    ' 10
+
+BYVAL:
+  category: declaration
+  desc: "Pass parameter by value (callee gets a copy)"
+  usage: |
+    SUB Display(BYVAL x AS INTEGER)
+      PRINT x
+    END SUB
+
+  example: |
+    SUB SafeAdd(BYVAL n AS INTEGER)
+        n = n + 10
+    END SUB
+    DIM x = 5
+    SafeAdd(x)
+    PRINT x    ' 5
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Variables & Data
+# ═══════════════════════════════════════════════════════════════════════════════
+
+CONSTANT:
+  category: data
+  desc: "Declares a named constant (value cannot be changed)"
+  usage: |
+    CONSTANT PI = 3.14159265
+    CONSTANT MAX_SIZE = 1024
+    CONSTANT APP_NAME = "MyApp"
+
+  example: |
+    CONSTANT PI = 3.14159265358979
+    CONSTANT MAX_SIZE = 100
+    CONSTANT APP_NAME = "FasterBASIC"
+
+    PRINT APP_NAME
+    PRINT "PI = "; PI
+    PRINT "Circle area (r=5): "; PI * 5 * 5
+
+
+DATA:
+  category: data
+  desc: "Stores inline data values to be read with READ"
+  usage: |
+    DATA 10, 20, 30, 40, 50
+    DATA "Alice", "Bob", "Charlie"
+    READ x
+    READ name$
+
+  example: |
+    DATA 10, 20, 30, 40, 50
+    DIM total AS INTEGER
+    DIM val AS INTEGER
+    total = 0
+    FOR i = 1 TO 5
+        READ val
+        total = total + val
+        PRINT val
+    NEXT i
+    PRINT "Total = "; total
+
+
+DEC:
+  category: data
+  desc: "Decrements a variable by 1 (or by a specified amount)"
+  usage: |
+    DEC counter
+    DEC x, 5
+
+  example: |
+    DIM n AS INTEGER
+    n = 10
+    DEC n
+    PRINT n      ' 9
+    DEC n, 4
+    PRINT n      ' 5
+
+
+DIM:
+  category: data
+  desc: "Declares a variable or array with an explicit type"
+  usage: |
+    DIM x AS INTEGER
+    DIM name$ AS STRING
+    DIM scores(10) AS INTEGER
+    DIM matrix(3, 3) AS DOUBLE
+    DIM items AS LIST OF INTEGER
+    Do not use DIM for global variables that need to be SHARED inside SUBs/FUNCTIONs; use GLOBAL instead.
+    Do not DIM FOR LOOP variables; FOR creates its own loop variable.
+
+  example: |
+    DIM name AS STRING
+    DIM count AS INTEGER
+    DIM pi AS DOUBLE
+
+    name = "FasterBASIC"
+    count = 42
+    pi = 3.14159265358979
+
+    PRINT name
+    PRINT count
+    PRINT pi
+
+    ' Array:
+    DIM scores(3) AS INTEGER
+    scores(1) = 95 : scores(2) = 82 : scores(3) = 78
+    FOR i = 1 TO 3
+        PRINT scores(i)
+    NEXT i
+
+
+ERASE:
+  category: data
+  desc: "Deallocates a dynamic array"
+  usage: |
+    DIM arr(100) AS INTEGER
+    ERASE arr
+
+GLOBAL:
+  category: data
+  desc: "Declares a variable with global scope (accessible everywhere)"
+  usage: |
+    GLOBAL count AS INTEGER
+    GLOBAL appName AS STRING
+
+  example: |
+    GLOBAL counter AS INTEGER
+
+    SUB Increment()
+        counter = counter + 1
+    END SUB
+
+    counter = 0
+    Increment()
+    Increment()
+    Increment()
+    PRINT counter    ' 3
+
+
+INC:
+  category: data
+  desc: "Increments a variable by 1 (or by a specified amount)"
+  usage: |
+    INC counter
+    INC x, 10
+
+  example: |
+    DIM n AS INTEGER
+    n = 10
+    INC n
+    PRINT n      ' 11
+    INC n, 4
+    PRINT n      ' 15
+
+
+LET:
+  category: data
+  desc: "Assigns a value to a variable (optional — assignment works without LET)"
+  usage: |
+    LET x = 42
+    LET name$ = "Hello"
+    x = 42
+
+LOCAL:
+  category: data
+  desc: "Declares a variable with local scope inside a SUB/FUNCTION"
+  usage: |
+    SUB MyProc()
+      LOCAL temp AS INTEGER
+      temp = 42
+    END SUB
+
+PRESERVE:
+  category: data
+  desc: "Keeps existing data when resizing an array with REDIM"
+  usage: |
+    REDIM PRESERVE arr(200) AS INTEGER
+
+READ:
+  category: data
+  desc: "Reads the next value from DATA statements"
+  usage: |
+    DATA 10, 20, 30
+    READ a
+    READ b
+    READ c
+
+  example: |
+    DATA "Alice", 30, "Bob", 25, "Carol", 28
+    DIM name AS STRING
+    DIM age AS INTEGER
+    FOR i = 1 TO 3
+        READ name
+        READ age
+        PRINT name; " is "; age; " years old"
+    NEXT i
+
+
+REDIM:
+  category: data
+  desc: "Resizes a dynamic array at runtime"
+  usage: |
+    REDIM arr(new_size) AS INTEGER
+    REDIM PRESERVE arr(new_size) AS INTEGER
+
+  example: |
+    DIM arr() AS INTEGER
+    REDIM arr(5)
+    PRINT "Initial size: "; SIZE(arr)
+    REDIM PRESERVE arr(10)
+    PRINT "New size: "; SIZE(arr)
+
+RESTORE:
+  category: data
+  desc: "Resets the DATA pointer to the beginning (or to a label)"
+  usage: |
+    RESTORE
+    RESTORE MyDataLabel
+
+  example: |
+    DATA 1, 2, 3
+    DIM a AS INTEGER
+    READ a : PRINT a    ' 1
+    READ a : PRINT a    ' 2
+    RESTORE
+    READ a : PRINT a    ' 1 again
+
+
+SHARED:
+  category: data
+  desc: "Makes a module-level variable accessible inside SUBs/FUNCTIONs"
+  usage: |
+    DIM count AS INTEGER
+    SUB Increment()
+      SHARED count
+      count = count + 1
+    END SUB
+
+  example: |
+    DIM count AS INTEGER
+    SUB Update()
+        SHARED count
+        count = count + 1
+    END SUB
+    count = 0
+    Update : Update
+    PRINT "Final count: "; count
+
+SWAP:
+  category: data
+  desc: "Exchanges the values of two variables"
+  usage: |
+    SWAP a, b
+
+  example: |
+    DIM a AS INTEGER
+    DIM b AS INTEGER
+    a = 10 : b = 20
+    PRINT "Before: a="; a; " b="; b
+    SWAP a, b
+    PRINT "After:  a="; a; " b="; b
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Type Names
+# ═══════════════════════════════════════════════════════════════════════════════
+
+BYTE:
+  category: type
+  desc: "8-bit unsigned integer type (0 to 255)"
+  usage: |
+    DIM b AS BYTE
+
+  example: |
+    DIM b AS BYTE = 255
+    PRINT b
+
+DOUBLE:
+  category: type
+  desc: "64-bit floating-point type"
+  usage: |
+    DIM d AS DOUBLE
+
+  example: |
+    DIM d AS DOUBLE = 3.1415926535
+    PRINT d
+
+COMPLEX:
+  category: type
+  desc: "Built-in complex number type (equivalent to TYPE Complex with Re/Im DOUBLE fields)"
+  usage: |
+    DIM z AS COMPLEX
+    z = CMPLX(0.5, -1.25)
+    PRINT REAL(z), IMAG(z)
+
+  example: |
+    DIM z AS COMPLEX = CMPLX(1.0, 2.0)
+    PRINT z
+
+INTEGER:
+  category: type
+  desc: "32-bit signed integer type"
+  usage: |
+    DIM n AS INTEGER
+
+  example: |
+    DIM i AS INTEGER = -100
+    PRINT i
+
+LONG:
+  category: type
+  desc: "64-bit signed integer type"
+  usage: |
+    DIM big AS LONG
+
+  example: |
+    DIM l AS LONG = 123456789012345
+    PRINT l
+
+SHORT:
+  category: type
+  desc: "16-bit signed integer type"
+  usage: |
+    DIM s AS SHORT
+
+  example: |
+    DIM s AS SHORT = 1000
+    PRINT s
+
+SINGLE:
+  category: type
+  desc: "32-bit floating-point type"
+  usage: |
+    DIM f AS SINGLE
+
+  example: |
+    DIM f AS SINGLE = 1.25
+    PRINT f
+
+STRING:
+  category: type
+  desc: "Variable-length text string type"
+  usage: |
+    DIM text AS STRING
+    DIM greeting$ AS STRING
+
+  example: |
+    DIM s AS STRING = "FasterBASIC"
+    PRINT s
+
+UBYTE:
+  category: type
+  desc: "8-bit unsigned integer type (alias for BYTE)"
+  usage: |
+    DIM b AS UBYTE
+
+  example: |
+    DIM b AS UBYTE = 128
+    PRINT b
+
+UINTEGER:
+  category: type
+  desc: "32-bit unsigned integer type"
+  usage: |
+    DIM u AS UINTEGER
+
+  example: |
+    DIM u AS UINTEGER = 1000
+    PRINT u
+
+ULONG:
+  category: type
+  desc: "64-bit unsigned integer type"
+  usage: |
+    DIM big AS ULONG
+
+  example: |
+    DIM lu AS ULONG = 1000000000
+    PRINT lu
+
+USHORT:
+  category: type
+  desc: "16-bit unsigned integer type"
+  usage: |
+    DIM s AS USHORT
+
+  example: |
+    DIM us AS USHORT = 500
+    PRINT us
+
+HASHMAP:
+  category: type
+  desc: "Key-value dictionary collection type"
+  usage: |
+    DIM lookup AS HASHMAP
+    lookup("alice") = 42
+
+  example: |
+    DIM scores AS HASHMAP
+    scores("Alice") = 100
+    PRINT scores("Alice")
+
+LIST:
+  category: type
+  desc: "Dynamic ordered collection type"
+  usage: |
+    DIM items AS LIST OF INTEGER
+    APPEND items, 42
+
+  example: |
+    DIM items AS LIST OF INTEGER
+    APPEND items, 10
+    APPEND items, 20
+    PRINT SIZE(items)
+
+MARSHALLED:
+  category: type
+  desc: "A type that can be serialised for inter-worker messaging"
+  usage: |
+    DIM data AS MARSHALLED
+
+TYPEOF:
+  category: type
+  desc: "Returns the type name of a variable or expression at runtime"
+  usage: |
+    PRINT TYPEOF(x)
+
+  example: |
+    DIM n AS INTEGER
+    DIM f AS DOUBLE
+    DIM s AS STRING
+    PRINT TYPEOF(n)     ' INTEGER
+    PRINT TYPEOF(f)     ' DOUBLE
+    PRINT TYPEOF(42.0)  ' DOUBLE
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  User-Defined Types & Classes
+# ═══════════════════════════════════════════════════════════════════════════════
+
+CLASS:
+  category: oop
+  desc: "Declares a class with methods, fields, constructor, and destructor"
+  usage: |
+    CLASS ClassName
+      DIM field AS INTEGER
+      CONSTRUCTOR(params)
+        ME.field = value
+      END CONSTRUCTOR
+      DESTRUCTOR()
+      END DESTRUCTOR
+      METHOD DoSomething()
+        statements
+      END METHOD
+    END CLASS
+    CLASS Child EXTENDS Parent
+      ' inherits Parent fields and methods
+    END CLASS
+
+  example: |
+    CLASS Person
+        DIM name AS STRING
+        CONSTRUCTOR(n$)
+            ME.name = n$
+        END CONSTRUCTOR
+        METHOD SayHello()
+            PRINT "Hello, I am "; ME.name
+        END METHOD
+    END CLASS
+    DIM p AS Person = NEW Person("Alice")
+    p.SayHello()
+
+CONSTRUCTOR:
+  category: oop
+  desc: "Declares the constructor for a CLASS (called on NEW)"
+  usage: |
+    CLASS MyClass
+      CONSTRUCTOR(x AS INTEGER)
+        ME.value = x
+      END CONSTRUCTOR
+    END CLASS
+
+  example: |
+    CLASS Point
+        DIM x AS INTEGER
+        DIM y AS INTEGER
+        CONSTRUCTOR(newX, newY)
+            ME.x = newX
+            ME.y = newY
+        END CONSTRUCTOR
+    END CLASS
+    DIM pt AS Point = NEW Point(10, 20)
+    PRINT pt.x; ", "; pt.y
+
+CREATE:
+  category: oop
+  desc: "Creates a new instance of a TYPE (value type construction)"
+  usage: |
+    DIM pt AS Vector2D
+    pt = CREATE Vector2D
+
+  example: |
+    TYPE Vector
+        x AS DOUBLE
+        y AS DOUBLE
+    END TYPE
+    DIM v AS Vector = CREATE Vector
+    v.x = 1.5 : v.y = 2.0
+    PRINT v.x; v.y
+
+DELETE:
+  category: oop
+  desc: "Destroys an object instance and calls its destructor"
+  usage: |
+    DELETE myObject
+
+  example: |
+    CLASS Resource
+        DESTRUCTOR()
+            PRINT "Resource freed"
+        END DESTRUCTOR
+    END CLASS
+    DIM r AS Resource = NEW Resource()
+    DELETE r
+
+DESTRUCTOR:
+  category: oop
+  desc: "Declares the destructor for a CLASS (called on DELETE)"
+  usage: |
+    CLASS MyClass
+      DESTRUCTOR()
+        ' cleanup resources
+      END DESTRUCTOR
+    END CLASS
+
+  example: |
+    CLASS Log
+        DESTRUCTOR()
+            PRINT "Log object destroyed"
+        END DESTRUCTOR
+    END CLASS
+    DIM l AS Log = NEW Log()
+    DELETE l
+
+ENDTYPE:
+  category: oop
+  desc: "Closes a TYPE block (alternative to END TYPE)"
+  usage: |
+    TYPE Vector2D
+      x AS DOUBLE
+      y AS DOUBLE
+    ENDTYPE
+
+  example: |
+    TYPE TRect
+        w AS INTEGER
+        h AS INTEGER
+    ENDTYPE
+    DIM r AS TRect : r.w = 5 : r.h = 10
+    PRINT r.w * r.h
+
+EXTENDS:
+  category: oop
+  desc: "Specifies the parent class for inheritance"
+  usage: |
+    CLASS Dog EXTENDS Animal
+      METHOD Speak()
+        PRINT "Woof!"
+      END METHOD
+    END CLASS
+
+  example: |
+    CLASS Animal
+        METHOD Speak() : PRINT "..." : END METHOD
+    END CLASS
+    CLASS Cat EXTENDS Animal
+        METHOD Speak() : PRINT "Meow" : END METHOD
+    END CLASS
+    DIM c AS Cat = NEW Cat()
+    c.Speak()
+
+ME:
+  category: oop
+  desc: "Refers to the current object instance inside a METHOD/CONSTRUCTOR"
+  usage: |
+    METHOD SetName(n AS STRING)
+      ME.name = n
+    END METHOD
+
+  example: |
+    CLASS Counter
+        DIM count AS INTEGER
+        METHOD Set(n) : ME.count = n : END METHOD
+        METHOD Get() AS INTEGER : Get = ME.count : END METHOD
+    END CLASS
+    DIM c AS Counter = NEW Counter()
+    c.Set(42)
+    PRINT c.Get()
+
+METHOD:
+  category: oop
+  desc: "Declares a method inside a CLASS"
+  usage: |
+    CLASS MyClass
+      METHOD Calculate(x AS INTEGER) AS INTEGER
+        Calculate = x * 2
+      END METHOD
+    END CLASS
+
+  example: |
+    CLASS Calculator
+        METHOD Add(a, b) AS INTEGER
+            Add = a + b
+        END METHOD
+    END CLASS
+    DIM c AS Calculator = NEW Calculator()
+    PRINT c.Add(5, 7)
+
+NEW:
+  category: oop
+  desc: "Creates a new instance of a CLASS"
+  usage: |
+    DIM obj AS MyClass
+    obj = NEW MyClass(args)
+
+NOTHING:
+  category: oop
+  desc: "Null reference value for object variables"
+  usage: |
+    DIM obj AS MyClass
+    obj = NOTHING
+    IF obj IS NOTHING THEN PRINT "no object"
+
+  example: |
+    DIM p AS Person = NOTHING
+    IF p IS NOTHING THEN PRINT "Person is null"
+    p = NEW Person("Bob")
+    IF p ISNOT NOTHING THEN PRINT p.name
+
+SUPER:
+  category: oop
+  desc: "Calls the parent class method or constructor from a subclass"
+  usage: |
+    CLASS Child EXTENDS Parent
+      CONSTRUCTOR()
+        SUPER()
+      END CONSTRUCTOR
+    END CLASS
+
+  example: |
+    CLASS Base
+        CONSTRUCTOR() : PRINT "Base init" : END CONSTRUCTOR
+    END CLASS
+    CLASS Derived EXTENDS Base
+        CONSTRUCTOR()
+            SUPER()
+            PRINT "Derived init"
+        END CONSTRUCTOR
+    END CLASS
+    DIM d AS Derived = NEW Derived()
+
+TYPE:
+  category: oop
+  desc: "Declares a user-defined value type (struct / record)"
+  usage: |
+    TYPE Vector2D
+      x AS DOUBLE
+      y AS DOUBLE
+    END TYPE
+    DIM pos AS Vector2D
+    pos.x = 10.0
+    pos.y = 20.0
+
+  example: |
+    TYPE Config
+        id AS INTEGER
+        active AS INTEGER
+    END TYPE
+    DIM cfg AS Config
+    cfg.id = 1 : cfg.active = 1
+    PRINT cfg.id; cfg.active
+
+WITH:
+  category: oop
+  desc: "Opens a WITH block to access members of an object without repeating the variable name"
+  usage: |
+    WITH player
+      .Name = "Alice"
+      .Score = 100
+      .Health = .Health - 10
+    ENDWITH
+    WITH enemies(i)
+      .X = .X + .Speed
+    ENDWITH
+    WITH car.Engine
+
+  example: |
+    TYPE Point : x AS INTEGER : y AS INTEGER : END TYPE
+    DIM pt AS Point
+    WITH pt
+        .x = 10 : .y = 20
+    END WITH
+    PRINT pt.x; pt.y
+      .RPM = 3000
+      .Temperature = 90.0
+    ENDWITH
+
+ENDWITH:
+  category: oop
+  desc: "Closes a WITH block"
+  usage: |
+    WITH player
+      .Score = .Score + 10
+    ENDWITH
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Concurrency — Workers
+# ═══════════════════════════════════════════════════════════════════════════════
+
+AWAIT:
+  category: worker
+  desc: "Waits for a FUTURE to complete and retrieves its result"
+  usage: |
+    DIM f AS FUTURE
+    f = SPAWN MyWorker
+    result = AWAIT(f)
+
+CANCEL:
+  category: worker
+  desc: "Sends a cancellation request to a running worker"
+  usage: |
+    CANCEL worker_id
+
+CANCELLED:
+  category: worker
+  desc: "Checks whether the current worker has been cancelled"
+  usage: |
+    WORKER LongTask
+      WHILE NOT CANCELLED
+        ' do work
+      WEND
+    END WORKER
+
+ENDWORKER:
+  category: worker
+  desc: "Closes a WORKER block (alternative to END WORKER)"
+  usage: |
+    WORKER MyWorker
+      statements
+    ENDWORKER
+
+FUTURE:
+  category: worker
+  desc: "A handle representing the eventual result of a spawned worker"
+  usage: |
+    DIM f AS FUTURE
+    f = SPAWN ComputeWorker
+    result = AWAIT(f)
+
+  example: |
+    WORKER Calculator
+        WAIT 5
+        SEND PARENT, 42
+    END WORKER
+    DIM f AS FUTURE = SPAWN Calculator
+    PRINT "Waiting for future..."
+    PRINT "Result: "; AWAIT(f)
+
+HASMESSAGE:
+  category: worker
+  desc: "Checks if there is a pending message from a worker"
+  usage: |
+    IF HASMESSAGE(worker_id) THEN
+      msg = RECEIVE(worker_id)
+    END IF
+
+  example: |
+    DIM w AS INTEGER = SPAWN Listener
+    DO
+        IF HASMESSAGE(w) THEN
+            PRINT "Worker sent: "; RECEIVE(w)
+            EXIT DO
+        END IF
+        WAIT 1
+    LOOP
+
+MARSHALL:
+  category: worker
+  desc: "Serialises data for safe transfer between workers"
+  usage: |
+    DIM data AS MARSHALLED
+    MARSHALL data, myObject
+
+  example: |
+    TYPE Point : x AS INTEGER : y AS INTEGER : ENDTYPE
+    DIM p AS Point : p.x = 10 : p.y = 20
+    DIM m AS MARSHALLED
+    MARSHALL m, p
+    ' m can now be sent via SEND
+
+PARENT:
+  category: worker
+  desc: "Refers to the parent (spawning) context in a worker, for SEND"
+  usage: |
+    WORKER MyWorker
+      SEND PARENT, result
+    END WORKER
+
+  example: |
+    WORKER Child
+        SEND PARENT, "Report"
+    END WORKER
+
+READY:
+  category: worker
+  desc: "Checks if a spawned worker has finished execution"
+  usage: |
+    IF READY(worker_id) THEN
+      result = RECEIVE(worker_id)
+    END IF
+
+  example: |
+    DIM w AS INTEGER = SPAWN LongJob
+    WHILE NOT READY(w) : WAIT 1 : WEND
+    PRINT "Finished"
+
+RECEIVE:
+  category: worker
+  desc: "Receives a message or result from a worker"
+  usage: |
+    msg = RECEIVE(worker_id)
+
+  example: |
+    DIM w AS INTEGER = SPAWN MyJob
+    PRINT "Received: "; RECEIVE(w)
+
+SEND:
+  category: worker
+  desc: "Sends a message to another worker or to PARENT"
+  usage: |
+    SEND worker_id, data
+    SEND PARENT, result
+
+  example: |
+    DIM w AS INTEGER = SPAWN MyWorker
+    SEND w, "Hello"
+
+SPAWN:
+  category: worker
+  desc: "Launches a worker as a concurrent task; returns a worker ID"
+  usage: |
+    DIM w AS INTEGER
+    w = SPAWN MyWorker
+    w = SPAWN MyWorker(arg1, arg2)
+
+  example: |
+    WORKER Task(n)
+        SEND PARENT, n * n
+    END WORKER
+    DIM w AS INTEGER = SPAWN Task(5)
+    PRINT RECEIVE(w)
+
+UNMARSHALL:
+  category: worker
+  desc: "Deserialises data received from a worker"
+  usage: |
+    DIM obj AS MyType
+    UNMARSHALL obj, received_data
+
+  example: |
+    TYPE Data : val AS INTEGER : ENDTYPE
+    DIM d AS Data
+    ' Assume msg is MARSHALLED data from a worker
+    UNMARSHALL d, msg
+    PRINT d.val
+
+WORKER:
+  category: worker
+  desc: "Declares a concurrent worker (runs in its own thread)"
+  usage: |
+    WORKER name
+      statements
+      SEND PARENT, result
+    END WORKER
+    WORKER ComputePi(precision AS INTEGER)
+      DIM result AS DOUBLE
+      ' compute...
+      SEND PARENT, result
+    END WORKER
+    ' ── Related Guides ──
+    ' articles/workers.md
+    ' articles/introduction_voicescript.md
+    ' articles/advanced_voicescript.md
+
+  example: |
+    WORKER MyWorker
+        FOR i = 1 TO 3
+            PRINT "Step "; i
+            WAIT 1
+        NEXT i
+        SEND PARENT, "OK"
+    END WORKER
+    DIM w AS INTEGER = SPAWN MyWorker
+    PRINT RECEIVE(w)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  I/O — Print & Input
+# ═══════════════════════════════════════════════════════════════════════════════
+
+CONSOLE:
+  category: io
+  desc: "Directs output to the console / terminal"
+  usage: |
+    CONSOLE
+    PRINT "This goes to the console"
+
+INPUT:
+  category: io
+  desc: "Reads a line of text or value from the user"
+  usage: |
+    INPUT "Enter your name: "; name$
+    INPUT x
+
+PRINT:
+  category: io
+  desc: "Outputs text and values to the terminal"
+  usage: |
+    PRINT "Hello, World!"
+    PRINT x; " + "; y; " = "; x + y
+    PRINT USING "###.##"; value
+
+  example: |
+    PRINT "Hello, World!"
+    DIM x AS INTEGER
+    x = 42
+    PRINT "The answer is "; x
+    PRINT 6; " x "; 7; " = "; 6 * 7
+    PRINT "Pi is about "; 3.14159
+    ' PRINT with no arguments outputs a blank line:
+    PRINT
+    PRINT "Done."
+
+
+USING:
+  category: io
+  desc: "Format specifier for PRINT USING"
+  usage: |
+    PRINT USING "###.##"; 3.14159
+    PRINT USING "$$#,###.##"; amount
+
+WRITE:
+  category: io
+  desc: "Outputs values separated by commas (data format)"
+  usage: |
+    WRITE x, y, z
+    WRITE name$, age, score
+
+  example: |
+    DIM name AS STRING
+    DIM age AS INTEGER
+    name = "Alice"
+    age = 30
+    ' WRITE outputs comma-separated values:
+    WRITE name, age, name & " is " & STR$(age)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  File I/O
+# ═══════════════════════════════════════════════════════════════════════════════
+
+CLOSE:
+  category: file_io
+  desc: "Closes an open file"
+  usage: |
+    CLOSE #1
+
+FIELD:
+  category: file_io
+  desc: "Defines the field layout for a random-access file record"
+  usage: |
+    FIELD #1, 20 AS name$, 4 AS age$
+
+LOF:
+  category: file_io
+  desc: "Returns the length of an open file in bytes"
+  usage: |
+    length = LOF(1)
+
+LSET:
+  category: file_io
+  desc: "Left-aligns a string in a fixed-length field variable"
+  usage: |
+    LSET field$ = value$
+
+OPEN:
+  category: file_io
+  desc: "Opens a file for reading, writing, or appending"
+  usage: |
+    OPEN "data.txt" FOR INPUT AS #1
+    OPEN "out.txt" FOR OUTPUT AS #2
+    OPEN "log.txt" FOR APPEND AS #3
+    OPEN "data.bin" FOR RANDOM AS #4
+
+PUT:
+  category: file_io
+  desc: "Writes a record to a random-access file"
+  usage: |
+    PUT #1, record_number
+
+RSET:
+  category: file_io
+  desc: "Right-aligns a string in a fixed-length field variable"
+  usage: |
+    RSET field$ = value$
+
+SEEK:
+  category: file_io
+  desc: "Moves the file pointer to a specific position"
+  usage: |
+    SEEK #1, position
+
+SLURP:
+  category: file_io
+  desc: "Reads an entire file into a string variable"
+  usage: |
+    content$ = SLURP("filename.txt")
+
+  example: |
+    SPIT "hello.txt", "Welcome to Ed-BASIC!"
+    DIM content AS STRING
+    content = SLURP("hello.txt")
+    PRINT content
+
+SPIT:
+  category: file_io
+  desc: "Writes a string to a file, replacing its contents"
+  usage: |
+    SPIT "output.txt", content$
+
+  example: |
+    SPIT "test.log", "Final Status: OK"
+    PRINT SLURP("test.log")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  String Functions
+# ═══════════════════════════════════════════════════════════════════════════════
+
+LCASE$:
+  category: string
+  desc: "Converts a string to lowercase"
+  usage: |
+    result$ = LCASE$("HELLO")   ' returns "hello"
+
+  example: |
+    PRINT LCASE$("HELLO WORLD")   ' hello world
+    PRINT LCASE$("FasterBASIC")   ' fasterbasic
+
+
+LEFT$:
+  category: string
+  desc: "Returns the leftmost n characters of a string"
+  usage: |
+    result$ = LEFT$("Hello", 3)   ' returns "Hel"
+
+  example: |
+    DIM s AS STRING
+    s = "FasterBASIC"
+    PRINT LEFT$(s, 6)    ' Faster
+    PRINT LEFT$(s, 1)    ' F
+
+
+MID$:
+  category: string
+  desc: "Returns or replaces a substring starting at a given position"
+  usage: |
+    result$ = MID$("Hello World", 7, 5)   ' returns "World"
+    MID$(text$, 3, 2) = "XY"
+
+  example: |
+    DIM s AS STRING
+    s = "Hello, World!"
+    PRINT MID$(s, 8, 5)      ' World
+    PRINT MID$(s, 1, 5)      ' Hello
+    ' Replace a substring in-place:
+    MID$(s, 8, 5) = "BASIC"
+    PRINT s                  ' Hello, BASIC!
+
+
+RIGHT$:
+  category: string
+  desc: "Returns the rightmost n characters of a string"
+  usage: |
+    result$ = RIGHT$("Hello", 3)   ' returns "llo"
+
+  example: |
+    DIM s AS STRING
+    s = "FasterBASIC"
+    PRINT RIGHT$(s, 5)   ' BASIC
+    PRINT RIGHT$(s, 1)   ' C
+
+
+CENTER$:
+  category: string
+  desc: "Centers a string in a field width using an optional pad string"
+  usage: |
+    result$ = CENTER$(text$, width)
+    result$ = CENTER$(text$, width, pad$)
+
+  example: |
+    PRINT "[" & CENTER$("HE", 6) & "]"          ' [  HE  ]
+    PRINT "[" & CENTER$("HE", 6, "-") & "]"      ' [--HE--]
+
+DELETE$:
+  category: string
+  desc: "Deletes a substring by 1-based position and length"
+  usage: |
+    result$ = DELETE$(text$, pos, len)
+
+  example: |
+    PRINT DELETE$("abcdef", 3, 2)   ' abef (deleted "cd")
+
+EXTRACT$:
+  category: string
+  desc: "Extracts a substring using inclusive 1-based start and end"
+  usage: |
+    result$ = EXTRACT$(text$, startPos, endPos)
+
+  example: |
+    PRINT EXTRACT$("abcdef", 2, 4)  ' bcd
+
+INSERT$:
+  category: string
+  desc: "Inserts text at a 1-based position"
+  usage: |
+    result$ = INSERT$(text$, pos, insert$)
+
+  example: |
+    PRINT INSERT$("abc", 2, "XX")   ' aXXbc
+
+INSTRREV:
+  category: string
+  desc: "Finds a substring from right to left (returns 1-based position or 0)"
+  usage: |
+    pos = INSTRREV(haystack$, needle$)
+    pos = INSTRREV(startPos, haystack$, needle$)
+
+  example: |
+    PRINT INSTRREV("banana", "na")          ' 5
+    PRINT INSTRREV("banana", "na", 4)       ' 3
+
+LPAD$:
+  category: string
+  desc: "Left-pads a string to a width using an optional pad string"
+  usage: |
+    result$ = LPAD$(text$, width)
+    result$ = LPAD$(text$, width, pad$)
+
+  example: |
+    PRINT LPAD$("42", 4, "0")       ' 0042
+    PRINT LPAD$("test", 10)         '       test (padded with spaces)
+
+REMOVE$:
+  category: string
+  desc: "Removes all occurrences of a pattern from a string"
+  usage: |
+    result$ = REMOVE$(text$, pattern$)
+
+  example: |
+    PRINT REMOVE$("cat,mat,rat", "at")      ' c,m,r
+
+REPEAT$:
+  category: string
+  desc: "Repeats a string pattern count times"
+  usage: |
+    result$ = REPEAT$(pattern$, count)
+
+  example: |
+    PRINT REPEAT$("*", 10)          ' **********
+
+REPLACE$:
+  category: string
+  desc: "Replaces all occurrences of one substring with another"
+  usage: |
+    result$ = REPLACE$(text$, old$, new$)
+
+  example: |
+    PRINT REPLACE$("I love dogs", "dogs", "cats")   ' I love cats
+
+REVERSE$:
+  category: string
+  desc: "Returns the input string with characters reversed"
+  usage: |
+    result$ = REVERSE$(text$)
+
+  example: |
+    PRINT REVERSE$("racecar")      ' racecar
+    PRINT REVERSE$("FasterBASIC")  ' CISABretsaF
+
+RPAD$:
+  category: string
+  desc: "Right-pads a string to a width using an optional pad string"
+  usage: |
+    result$ = RPAD$(text$, width)
+    result$ = RPAD$(text$, width, pad$)
+
+  example: |
+    PRINT "[" & RPAD$("HE", 6, ".") & "]"      ' [HE....]
+
+TALLY:
+  category: string
+  desc: "Counts non-overlapping occurrences of a pattern in a string"
+  usage: |
+    n = TALLY(text$, pattern$)
+
+  example: |
+    PRINT TALLY("abracadabra", "a")      ' 5
+    PRINT TALLY("aaaaa", "aa")           ' 2
+
+
+UCASE$:
+  category: string
+  desc: "Converts a string to uppercase"
+  usage: |
+    result$ = UCASE$("hello")   ' returns "HELLO"
+
+  example: |
+    PRINT UCASE$("hello world")   ' HELLO WORLD
+    PRINT UCASE$("FasterBASIC")   ' FASTERBASIC
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Operators
+# ═══════════════════════════════════════════════════════════════════════════════
+
+AND:
+  category: operator
+  desc: "Logical AND with short-circuit evaluation (returns 0 or 1)"
+  usage: |
+    IF a > 0 AND b > 0 THEN PRINT "both positive"
+    IF obj <> NOTHING AND obj.Health > 0 THEN PRINT "alive"
+
+  example: |
+    DIM a AS INTEGER
+    DIM b AS INTEGER
+    a = 5 : b = 10
+    IF a > 0 AND b > 0 THEN PRINT "both positive"
+    IF a > 3 AND b < 5 THEN PRINT "a>3 and b<5"   ' not printed
+    PRINT (1 = 1) AND (2 = 2)    ' 1 (true)
+    PRINT (1 = 1) AND (2 = 3)    ' 0 (false)
+
+
+ANDALSO:
+  category: operator
+  desc: "Alias for AND — logical AND with short-circuit evaluation"
+  usage: |
+    IF a > 0 ANDALSO b > 0 THEN PRINT "both positive"
+
+  example: |
+    DIM a AS INTEGER = 10
+    DIM b AS INTEGER = 20
+    IF a > 5 ANDALSO b > 15 THEN PRINT "Both conditions met"
+
+BAND:
+  category: operator
+  desc: "Bitwise AND operator"
+  usage: |
+    result = mask BAND &HFF
+    lowBits = value BAND &H0F
+
+  example: |
+    PRINT 12 BAND 10     ' 8  (1100 AND 1010 = 1000)
+    PRINT 255 BAND 15    ' 15 (low nibble mask)
+    PRINT 7 BAND 5       ' 5  (111 AND 101 = 101)
+
+
+BNOT:
+  category: operator
+  desc: "Bitwise NOT (one's complement) — flips all bits"
+  usage: |
+    inverted = BNOT mask
+    result = BNOT &HFF   ' all bits flipped
+
+  example: |
+    PRINT HEX$(BNOT 0)      ' FFFFFFFFFFFFFFFF
+    PRINT BNOT 1            ' -2 (two's complement of 1 is -2)
+    PRINT BNOT -1           ' 0
+
+BOR:
+  category: operator
+  desc: "Bitwise OR operator"
+  usage: |
+    flags = flags BOR &H80
+    combined = a BOR b
+
+  example: |
+    PRINT 12 BOR 3      ' 15 (1100 OR 0011 = 1111)
+    PRINT 8 BOR 4       ' 12
+    PRINT 1 BOR 2       ' 3
+
+
+BXOR:
+  category: operator
+  desc: "Bitwise exclusive OR operator"
+  usage: |
+    flags = flags BXOR toggle_mask
+    swapped = a BXOR b
+
+  example: |
+    PRINT 12 BXOR 10    ' 6  (1100 XOR 1010 = 0110)
+    PRINT 15 BXOR 9     ' 6  (1111 XOR 1001 = 0110)
+    ' Simple toggle bit pattern:
+    DIM flags AS INTEGER
+    flags = 0
+    flags = flags BXOR 1   ' set bit 0
+    PRINT flags             ' 1
+    flags = flags BXOR 1   ' clear bit 0
+    PRINT flags             ' 0
+
+
+EQV:
+  category: operator
+  desc: "Logical equivalence operator (true when both operands are equal)"
+  usage: |
+    result = a EQV b
+
+  example: |
+    PRINT (1 = 1) EQV (2 = 2)    ' 1 (True)
+    PRINT (1 = 1) EQV (2 = 3)    ' 0 (False)
+    PRINT (1 = 0) EQV (2 = 3)    ' 1 (True)
+
+IMP:
+  category: operator
+  desc: "Logical implication operator"
+  usage: |
+    result = a IMP b
+
+  example: |
+    PRINT 1 IMP 1    ' 1
+    PRINT 1 IMP 0    ' 0
+    PRINT 0 IMP 1    ' 1
+    PRINT 0 IMP 0    ' 1
+
+MOD:
+  category: operator
+  desc: "Integer modulo (remainder) operator"
+  usage: |
+    remainder = 17 MOD 5   ' returns 2
+    IF n MOD 2 = 0 THEN PRINT "even"
+
+  example: |
+    PRINT 17 MOD 5    ' 2
+    PRINT 10 MOD 3    ' 1
+    PRINT 20 MOD 4    ' 0
+    ' Check even / odd:
+    FOR i = 1 TO 6
+        IF i MOD 2 = 0 THEN
+            PRINT i; " is even"
+        ELSE
+            PRINT i; " is odd"
+        END IF
+    NEXT i
+
+
+NOT:
+  category: operator
+  desc: "Logical NOT operator (returns 1 if operand is 0, else 0)"
+  usage: |
+    IF NOT done THEN PRINT "still working"
+    IF NOT (a > 5) THEN PRINT "a is 5 or less"
+
+  example: |
+    DIM done AS INTEGER
+    done = 0
+    IF NOT done THEN PRINT "still running"
+    done = 1
+    IF NOT done THEN PRINT "still running"   ' not printed
+    PRINT NOT 0    ' 1
+    PRINT NOT 1    ' 0
+
+
+OR:
+  category: operator
+  desc: "Logical OR with short-circuit evaluation (returns 0 or 1)"
+  usage: |
+    IF a = 1 OR b = 1 THEN PRINT "at least one"
+    IF ptr = NOTHING OR NOT ready THEN EXIT SUB
+
+  example: |
+    DIM a AS INTEGER
+    DIM b AS INTEGER
+    a = 0 : b = 5
+    IF a > 0 OR b > 0 THEN PRINT "at least one positive"
+    PRINT (1 = 2) OR (3 = 3)    ' 1 (true)
+    PRINT (1 = 2) OR (2 = 3)    ' 0 (false)
+
+
+ORELSE:
+  category: operator
+  desc: "Alias for OR — logical OR with short-circuit evaluation"
+  usage: |
+    IF a = 1 ORELSE b = 1 THEN PRINT "at least one"
+
+  example: |
+    DIM status AS INTEGER = 0
+    IF status = 0 ORELSE status = 1 THEN PRINT "Valid state"
+
+XOR:
+  category: operator
+  desc: "Logical exclusive OR (returns 0 or 1)"
+  usage: |
+    result = a XOR b
+    IF flag1 XOR flag2 THEN PRINT "exactly one is true"
+
+  example: |
+    PRINT (1 = 1) XOR (2 = 3)    ' 1 (True)
+    PRINT (1 = 1) XOR (2 = 2)    ' 0 (False)
+    PRINT (1 = 0) XOR (2 = 3)    ' 0 (False)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  HashMap Operations
+# ═══════════════════════════════════════════════════════════════════════════════
+
+HASKEY:
+  category: hashmap
+  desc: "Checks whether a key exists in a HASHMAP"
+  usage: |
+    IF HASKEY(myMap, "name") THEN
+      PRINT myMap("name")
+    END IF
+
+  example: |
+    DIM ages AS HASHMAP
+    ages("Alice") = 30
+    ages("Bob")   = 25
+    IF HASKEY(ages, "Alice") THEN
+        PRINT "Alice is "; ages("Alice")
+    END IF
+    IF NOT HASKEY(ages, "Carol") THEN
+        PRINT "Carol not found"
+    END IF
+
+
+KEYS:
+  category: hashmap
+  desc: "Returns a LIST of all keys in a HASHMAP"
+  usage: |
+    DIM k AS LIST OF STRING
+    k = KEYS(myMap)
+
+  example: |
+    DIM scores AS HASHMAP
+    scores("Alice") = 95
+    scores("Bob")   = 82
+    DIM k AS LIST OF STRING
+    k = KEYS(scores)
+    PRINT LENGTH(k)    ' 2
+    FOR EACH name$ IN k
+        PRINT name$; " -> "; scores(name$)
+    NEXT name$
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  List / Collection Operations
+# ═══════════════════════════════════════════════════════════════════════════════
+
+APPEND:
+  category: collection
+  desc: "Adds an element to the end of a LIST"
+  usage: |
+    APPEND myList, value
+
+  example: |
+    DIM nums AS LIST OF INTEGER
+    nums.APPEND(10)
+    nums.APPEND(20)
+    nums.APPEND(30)
+    PRINT LENGTH(nums)    ' 3
+    FOR EACH n IN nums
+        PRINT n
+    NEXT n
+
+
+CONTAINS:
+  category: collection
+  desc: "Checks whether a LIST contains a given value"
+  usage: |
+    IF CONTAINS(myList, value) THEN PRINT "found"
+
+  example: |
+    DIM fruits AS LIST OF STRING
+    fruits.APPEND("apple")
+    fruits.APPEND("banana")
+    fruits.APPEND("cherry")
+    PRINT CONTAINS(fruits, "banana")   ' 1 (true)
+    PRINT CONTAINS(fruits, "grape")    ' 0 (false)
+
+
+COPY:
+  category: collection
+  desc: "Creates a shallow copy of a LIST"
+  usage: |
+    DIM copy AS LIST OF INTEGER
+    copy = COPY(original)
+
+  example: |
+    DIM original AS LIST OF INTEGER
+    original.APPEND(10) : original.APPEND(20) : original.APPEND(30)
+    DIM copy AS LIST OF INTEGER
+    copy = COPY(original)
+    copy.POP()
+    PRINT LENGTH(original)    ' 3 (unchanged)
+    PRINT LENGTH(copy)        ' 2
+
+
+EMPTY:
+  category: collection
+  desc: "Checks whether a LIST or HASHMAP has no elements"
+  usage: |
+    IF EMPTY(myList) THEN PRINT "no items"
+
+  example: |
+    DIM nums AS LIST OF INTEGER
+    PRINT EMPTY(nums)    ' 1 (true — nothing in it yet)
+    nums.APPEND(42)
+    PRINT EMPTY(nums)    ' 0 (false)
+    nums.POP()
+    PRINT EMPTY(nums)    ' 1 again
+
+
+EXTEND:
+  category: collection
+  desc: "Appends all elements from one LIST onto another"
+  usage: |
+    EXTEND targetList, sourceList
+
+  example: |
+    DIM a AS LIST OF INTEGER
+    DIM b AS LIST OF INTEGER
+    a.APPEND(1) : a.APPEND(2)
+    b.APPEND(3) : b.APPEND(4)
+    a.EXTEND(b)
+    PRINT LENGTH(a)    ' 4
+    FOR EACH n IN a
+        PRINT n    ' 1, 2, 3, 4
+    NEXT n
+
+
+GET:
+  category: collection
+  desc: "Retrieves an element from a LIST by index"
+  usage: |
+    value = GET(myList, index)
+
+HEAD:
+  category: collection
+  desc: "Returns the first element of a LIST"
+  usage: |
+    first = HEAD(myList)
+
+  example: |
+    DIM nums AS LIST OF INTEGER
+    nums.APPEND(42)
+    nums.APPEND(7)
+    nums.APPEND(99)
+    PRINT HEAD(nums)    ' 42 (first element)
+
+
+INDEXOF:
+  category: collection
+  desc: "Returns the index of the first occurrence of a value in a LIST"
+  usage: |
+    pos = INDEXOF(myList, value)
+
+  example: |
+    DIM nums AS LIST OF INTEGER
+    nums.APPEND(10)
+    nums.APPEND(20)
+    nums.APPEND(30)
+    PRINT INDEXOF(nums, 20)    ' 2 (1-based index)
+    PRINT INDEXOF(nums, 99)    ' 0 (not found)
+
+
+INSERT:
+  category: collection
+  desc: "Inserts an element at a specific position in a LIST"
+  usage: |
+    INSERT myList, index, value
+
+JOIN:
+  category: collection
+  desc: "Joins all elements of a LIST into a single string with a separator"
+  usage: |
+    result$ = JOIN(myList, ", ")
+
+  example: |
+    DIM words AS LIST OF STRING
+    words.APPEND("Hello")
+    words.APPEND("FasterBASIC")
+    words.APPEND("World")
+    PRINT JOIN(words, ", ")    ' Hello, FasterBASIC, World
+    PRINT JOIN(words, " | ")   ' Hello | FasterBASIC | World
+
+
+LENGTH:
+  category: collection
+  desc: "Returns the number of elements in a LIST or HASHMAP"
+  usage: |
+    n = LENGTH(myList)
+
+  example: |
+    DIM items AS LIST OF STRING
+    items.APPEND("a")
+    items.APPEND("b")
+    items.APPEND("c")
+    PRINT LENGTH(items)    ' 3
+    items.POP()
+    PRINT LENGTH(items)    ' 2
+
+
+POP:
+  category: collection
+  desc: "Removes and returns the last element of a LIST"
+  usage: |
+    value = POP(myList)
+
+  example: |
+    DIM nums AS LIST OF INTEGER
+    nums.APPEND(10)
+    nums.APPEND(20)
+    nums.APPEND(30)
+    DIM last AS INTEGER
+    last = nums.POP()
+    PRINT last            ' 30
+    PRINT LENGTH(nums)    ' 2
+
+
+PREPEND:
+  category: collection
+  desc: "Adds an element to the beginning of a LIST"
+  usage: |
+    PREPEND myList, value
+
+  example: |
+    DIM words AS LIST OF STRING
+    words.APPEND("world")
+    words.PREPEND("hello")
+    PRINT HEAD(words)    ' hello
+    PRINT TAIL(words)    ' world
+
+
+REMOVE:
+  category: collection
+  desc: "Removes an element from a LIST or key from a HASHMAP"
+  usage: |
+    REMOVE myList, index
+    REMOVE myMap, "key"
+
+REST:
+  category: collection
+  desc: "Returns a LIST containing all elements except the first"
+  usage: |
+    tail = REST(myList)
+
+  example: |
+    DIM nums AS LIST OF INTEGER
+    nums.APPEND(10) : nums.APPEND(20) : nums.APPEND(30)
+    DIM tail AS LIST OF INTEGER
+    tail = REST(nums)
+    PRINT LENGTH(tail)      ' 2
+    PRINT HEAD(tail)        ' 20
+
+
+REVERSE:
+  category: collection
+  desc: "Reverses the order of elements in a LIST"
+  usage: |
+    REVERSE myList
+
+  example: |
+    DIM nums AS LIST OF INTEGER
+    nums.APPEND(1)
+    nums.APPEND(2)
+    nums.APPEND(3)
+    nums.REVERSE()
+    FOR EACH n IN nums
+        PRINT n    ' 3, 2, 1
+    NEXT n
+
+
+SHIFT:
+  category: collection
+  desc: "Removes and returns the first element of a LIST"
+  usage: |
+    value = SHIFT(myList)
+
+  example: |
+    DIM nums AS LIST OF INTEGER
+    nums.APPEND(10)
+    nums.APPEND(20)
+    nums.APPEND(30)
+    DIM first AS INTEGER
+    first = nums.SHIFT()
+    PRINT first           ' 10
+    PRINT LENGTH(nums)    ' 2
+    PRINT HEAD(nums)      ' 20
+
+
+SIZE:
+  category: collection
+  desc: "Returns the number of elements in a LIST or HASHMAP"
+  usage: |
+    n = SIZE(myMap)
+
+SORT:
+  category: collection
+  desc: "Sorts a LIST in-place. Accepts optional ASCENDING (default) or DESCENDING keyword"
+  usage: |
+    myList.SORT()               ' ascending (default)
+    myList.SORT(DESCENDING)     ' highest first
+    myList.SORT(ASCENDING)      ' explicit ascending
+    ' Works on LIST OF INTEGER, LIST OF DOUBLE, LIST OF STRING:
+    DIM nums AS LIST OF INTEGER = LIST(5, 3, 8, 1, 9)
+    nums.SORT()
+    PRINT nums.HEAD()           ' 1
+    nums.SORT(DESCENDING)
+    PRINT nums.HEAD()           ' 9
+
+  example: |
+    DIM nums AS LIST OF INTEGER
+    nums.APPEND(5)
+    nums.APPEND(2)
+    nums.APPEND(8)
+    nums.APPEND(1)
+    nums.SORT()
+    FOR EACH n IN nums
+        PRINT n    ' 1, 2, 5, 8
+    NEXT n
+    nums.SORT(DESCENDING)
+    PRINT HEAD(nums)    ' 8
+
+
+SORTED:
+  category: collection
+  desc: "Returns a new sorted LIST, leaving the original unchanged. Accepts optional ASCENDING (default) or DESCENDING keyword"
+  usage: |
+    DIM copy AS LIST OF INTEGER
+    LET copy = myList.SORTED()              ' ascending copy
+    LET copy = myList.SORTED(DESCENDING)    ' descending copy
+    ' Original is untouched:
+    DIM original AS LIST OF STRING = LIST("banana", "apple", "cherry")
+    DIM sorted AS LIST OF STRING
+    LET sorted = original.SORTED()
+    PRINT original.HEAD()    ' banana
+    PRINT sorted.HEAD()      ' apple
+
+  example: |
+    DIM original AS LIST OF STRING
+    original.APPEND("banana")
+    original.APPEND("apple")
+    original.APPEND("cherry")
+    DIM copy AS LIST OF STRING
+    copy = original.SORTED()
+    PRINT HEAD(original)    ' banana  (original unchanged)
+    PRINT HEAD(copy)        ' apple   (sorted copy)
+
+
+TAIL:
+  category: collection
+  desc: "Returns the last element of a LIST"
+  usage: |
+    last = TAIL(myList)
+
+  example: |
+    DIM nums AS LIST OF INTEGER
+    nums.APPEND(42)
+    nums.APPEND(7)
+    nums.APPEND(99)
+    PRINT TAIL(nums)    ' 99 (last element)
+
+
+CLEAR:
+  category: collection
+  desc: "Removes all elements from a LIST or HASHMAP"
+  usage: |
+    CLEAR myList
+    CLEAR myMap
+
+  example: |
+    DIM nums AS LIST OF INTEGER
+    nums.APPEND(1) : nums.APPEND(2) : nums.APPEND(3)
+    PRINT LENGTH(nums)    ' 3
+    nums.CLEAR()
+    PRINT LENGTH(nums)    ' 0
+    PRINT EMPTY(nums)     ' 1
+
+
+ASCENDING:
+  category: collection
+  desc: "Sort-direction keyword — specifies ascending order (lowest first). This is the default for SORT, SORTED, QSORT, and INDEX and may be omitted"
+  usage: |
+    myList.SORT(ASCENDING)
+    QSORT(a(), ASCENDING)
+    INDEX(src(), dst(), ASCENDING)
+
+DESCENDING:
+  category: collection
+  desc: "Sort-direction keyword — specifies descending order (highest first) for SORT, SORTED, QSORT, and INDEX"
+  usage: |
+    myList.SORT(DESCENDING)
+    LET copy = myList.SORTED(DESCENDING)
+    QSORT(a(), DESCENDING)
+    INDEX(src(), dst(), DESCENDING)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Compiler Directives
+# ═══════════════════════════════════════════════════════════════════════════════
+
+INCLUDE:
+  category: directive
+  desc: "Includes another source file into the current compilation"
+  usage: |
+    INCLUDE "utils.bas"
+    INCLUDE ONCE "header.bas"
+
+REM:
+  category: directive
+  desc: "Comment — remainder of the line is ignored by the compiler"
+  usage: |
+    REM This is a comment
+    ' This is also a comment
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Terminal / Screen — General
+# ═══════════════════════════════════════════════════════════════════════════════
+
+AT:
+  category: terminal
+  desc: "Positions the cursor at a specific column on the current line"
+  usage: |
+    PRINT AT 20; "Hello"
+
+CLS:
+  category: terminal
+  desc: "Clears the terminal screen"
+  usage: |
+    CLS
+
+  example: |
+    PRINT "This will be cleared..."
+    CLS
+    PRINT "Screen cleared!"
+
+
+COLOR:
+  category: terminal
+  desc: "Sets the foreground and background text colours"
+  usage: |
+    COLOR foreground
+    COLOR foreground, background
+
+  example: |
+    COLOR 2    ' green text
+    PRINT "Green text"
+    COLOR 4    ' red text
+    PRINT "Red text"
+    COLOR_RESET
+    PRINT "Normal text"
+
+
+COLOUR:
+  category: terminal
+  desc: "Sets the foreground and background text colours (UK spelling)"
+  usage: |
+    COLOUR foreground
+    COLOUR foreground, background
+
+LOCATE:
+  category: terminal
+  desc: "Moves the cursor to a specific row and column"
+  usage: |
+    LOCATE row, col
+    LOCATE 10, 20
+
+  example: |
+    CLS
+    LOCATE 5, 10
+    PRINT "Positioned text"
+    LOCATE 10, 1
+    PRINT "Line 10, column 1"
+
+
+POS:
+  category: terminal
+  desc: "Returns the current cursor column position"
+  usage: |
+    col = POS
+
+ROW:
+  category: terminal
+  desc: "Returns the current cursor row position"
+  usage: |
+    r = ROW
+
+WAIT:
+  category: terminal
+  desc: "Pauses execution for a number of centiseconds"
+  usage: |
+    WAIT 100    ' wait 1 second (100 centiseconds)
+
+  example: |
+    PRINT "Pause for 1 second..."
+    WAIT 100
+    PRINT "Done"
+
+SLEEP_DEPRECATED:
+  category: terminal
+  desc: "Pauses execution for a specified duration"
+  usage: |
+    WAIT 100
+    WAIT 200
+
+  example: |
+    PRINT "Starting..."
+    WAIT 50    ' wait 500 milliseconds
+    PRINT "500ms later"
+    WAIT 100
+    PRINT "1 second later"
+
+
+CSRLIN:
+  category: terminal
+  desc: "Returns the current cursor row (line) position"
+  usage: |
+    row = CSRLIN
+
+COLOR_RESET:
+  category: terminal
+  desc: "Resets all terminal colour and style attributes to defaults"
+  usage: |
+    COLOR_RESET
+
+SCREEN_ALTERNATE:
+  category: terminal
+  desc: "Switches to the alternate terminal screen buffer"
+  usage: |
+    SCREEN_ALTERNATE
+    ' draw UI in alternate buffer
+    SCREEN_MAIN
+
+SCREEN_MAIN:
+  category: terminal
+  desc: "Switches back to the main terminal screen buffer"
+  usage: |
+    SCREEN_ALTERNATE
+    ' work in alternate buffer
+    SCREEN_MAIN     ' restore original screen
+
+WRCH:
+  category: terminal
+  desc: "Writes a single raw byte/character to the terminal"
+  usage: |
+    WRCH 27        ' ESC character
+    WRCH 65        ' letter A
+
+WRSTR:
+  category: terminal
+  desc: "Writes a raw string to the terminal without newline"
+  usage: |
+    WRSTR "Hello"
+    WRSTR escape_sequence$
+
+WAIT_MS:
+  category: terminal
+  desc: "Pauses execution for a specified number of milliseconds"
+  usage: |
+    WAIT_MS 500    ' wait half a second
+    WAIT_MS delay
+
+  example: |
+    PRINT "Milliseconds starting..."
+    WAIT_MS 250
+    PRINT "250ms elapsed"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Terminal — VDU Output
+# ═══════════════════════════════════════════════════════════════════════════════
+
+VDUCLS:
+  category: vdu
+  desc: "Clears the VDU terminal screen"
+  usage: |
+    VDUCLS
+
+  example: |
+    VDUCLS
+    PRINT "Screen cleared"
+
+VDUCOLOR:
+  category: vdu
+  desc: "Sets VDU text colour by index"
+  usage: |
+    VDUCOLOR index
+
+  example: |
+    VDUCOLOR 1    ' Usually red or blue depending on palette
+    PRINT "Colored text"
+
+VDUCOLOUR:
+  category: vdu
+  desc: "Sets VDU text colour by index (UK spelling)"
+  usage: |
+    VDUCOLOUR index
+
+  example: |
+    VDUCOLOUR 2
+    PRINT "UK style color"
+
+VDUCURSOR:
+  category: vdu
+  desc: "Sets the VDU cursor visibility or shape"
+  usage: |
+    VDUCURSOR ON
+    VDUCURSOR OFF
+
+  example: |
+    VDUCURSOR OFF
+    WAIT 100
+    VDUCURSOR ON
+
+VDUDOWN:
+  category: vdu
+  desc: "Moves the VDU cursor down one row"
+  usage: |
+    VDUDOWN
+
+  example: |
+    PRINT "Top"
+    VDUDOWN
+    PRINT "Bottom"
+
+VDUEOL:
+  category: vdu
+  desc: "Clears from the VDU cursor position to the end of the line"
+  usage: |
+    VDUEOL
+
+  example: |
+    PRINT "Long line of text";
+    VDUMOVE CSRLIN, 5
+    VDUEOL
+
+VDUEOS:
+  category: vdu
+  desc: "Clears from the VDU cursor position to the end of the screen"
+  usage: |
+    VDUEOS
+
+  example: |
+    VDUMOVE 15, 0
+    VDUEOS
+
+VDUHEIGHT:
+  category: vdu
+  desc: "Returns the height of the VDU terminal in rows"
+  usage: |
+    h = VDUHEIGHT
+
+  example: |
+    PRINT "VDU Rows: "; VDUHEIGHT
+
+VDULEFT:
+  category: vdu
+  desc: "Moves the VDU cursor left one column"
+  usage: |
+    VDULEFT
+
+  example: |
+    PRINT "Text"
+    VDULEFT : VDULEFT
+    PRINT "!!"
+
+VDUMOVE:
+  category: vdu
+  desc: "Moves the VDU cursor to a specific row and column"
+  usage: |
+    VDUMOVE row, col
+
+  example: |
+    VDUCLS
+    VDUMOVE 10, 10
+    PRINT "Centerish"
+
+VDUPOS:
+  category: vdu
+  desc: "Returns the current VDU cursor position"
+  usage: |
+    VDUPOS
+
+  example: |
+    PRINT "VDU cursor at: "; VDUPOSX; ", "; VDUPOSY
+
+VDUPOSX:
+  category: vdu
+  desc: "Returns the current VDU cursor column (x position)"
+  usage: |
+    x = VDUPOSX
+
+  example: |
+    PRINT "Current column: "; VDUPOSX
+
+VDUPOSY:
+  category: vdu
+  desc: "Returns the current VDU cursor row (y position)"
+  usage: |
+    y = VDUPOSY
+
+  example: |
+    PRINT "Current row: "; VDUPOSY
+
+VDURESET:
+  category: vdu
+  desc: "Resets VDU terminal attributes to defaults"
+  usage: |
+    VDURESET
+
+  example: |
+    VDURGB 255, 0, 0
+    PRINT "Red"
+    VDURESET
+    PRINT "Normal"
+
+VDURIGHT:
+  category: vdu
+  desc: "Moves the VDU cursor right one column"
+  usage: |
+    VDURIGHT
+
+  example: |
+    VDURIGHT : VDURIGHT
+    PRINT "Offset"
+
+VDURGB:
+  category: vdu
+  desc: "Sets VDU text colour using RGB values"
+  usage: |
+    VDURGB r, g, b
+
+  example: |
+    VDURGB 100, 200, 255
+    PRINT "Vibrant colors"
+
+VDUSCREEN:
+  category: vdu
+  desc: "Switches between VDU screen buffers"
+  usage: |
+    VDUSCREEN buffer_id
+
+  example: |
+    VDUSCREEN 1  ' Alternate buffer
+    PRINT "Alt screen"
+    WAIT 100
+    VDUSCREEN 0  ' Main buffer
+
+VDUSIZE:
+  category: vdu
+  desc: "Returns the VDU terminal dimensions (width, height)"
+  usage: |
+    VDUSIZE
+
+  example: |
+    PRINT "VDU Dimensions: "; VDUWIDTH; "x"; VDUHEIGHT
+
+VDUSTYLE:
+  category: vdu
+  desc: "Sets VDU text style attributes (bold, italic, etc.)"
+  usage: |
+    VDUSTYLE style_mask
+
+  example: |
+    VDUSTYLE 1  ' Bold
+    PRINT "Bold VDU"
+    VDURESET
+    VDUSTYLE style_flags
+
+VDUUP:
+  category: vdu
+  desc: "Moves the VDU cursor up one row"
+  usage: |
+    VDUUP
+
+  example: |
+    PRINT "Line 2"
+    VDUUP
+    PRINT "Line 1 (overwritten)"
+
+VDUWIDTH:
+  category: vdu
+  desc: "Returns the width of the VDU terminal in columns"
+  usage: |
+    w = VDUWIDTH
+
+  example: |
+    PRINT "VDU Width: "; VDUWIDTH; " columns"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Terminal — Cursor Control
+# ═══════════════════════════════════════════════════════════════════════════════
+
+CURSOR_HIDE:
+  category: cursor
+  desc: "Hides the text cursor"
+  usage: |
+    CURSOR_HIDE
+
+  example: |
+    CURSOR_HIDE
+    PRINT "Busy..."
+    WAIT 100
+    CURSOR_SHOW
+
+CURSOR_OFF:
+  category: cursor
+  desc: "Turns off the text cursor display"
+  usage: |
+    CURSOR_OFF
+
+  example: |
+    CURSOR_OFF
+
+CURSOR_ON:
+  category: cursor
+  desc: "Turns on the text cursor display"
+  usage: |
+    CURSOR_ON
+
+  example: |
+    CURSOR_ON
+
+CURSOR_RESTORE:
+  category: cursor
+  desc: "Restores a previously saved cursor position"
+  usage: |
+    CURSOR_RESTORE
+
+  example: |
+    CURSOR_SAVE
+    VDUMOVE 0, 0 : PRINT "Title"
+    CURSOR_RESTORE
+
+CURSOR_SAVE:
+  category: cursor
+  desc: "Saves the current cursor position for later restoration"
+  usage: |
+    CURSOR_SAVE
+
+  example: |
+    CURSOR_SAVE
+    ' Go somewhere else
+    VDUMOVE 5, 5
+    PRINT "Temporary info"
+    CURSOR_RESTORE
+
+CURSOR_SHOW:
+  category: cursor
+  desc: "Shows the text cursor"
+  usage: |
+    CURSOR_SHOW
+
+  example: |
+    CURSOR_SHOW
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Terminal — Colour & Style
+# ═══════════════════════════════════════════════════════════════════════════════
+
+BLINK:
+  category: style
+  desc: "Enables blinking text attribute"
+  usage: |
+    BLINK
+    PRINT "Attention!"
+    NORMAL
+
+  example: |
+    BLINK : PRINT "ALERT" : NORMAL
+
+BOLD:
+  category: style
+  desc: "Enables bold text attribute"
+  usage: |
+    BOLD
+    PRINT "Important"
+    NORMAL
+
+  example: |
+    BOLD : PRINT "HEAVY" : NORMAL
+
+INVERSE:
+  category: style
+  desc: "Enables inverse (reverse video) text attribute"
+  usage: |
+    INVERSE
+    PRINT "Highlighted"
+    NORMAL
+
+  example: |
+    INVERSE : PRINT " REVERSE " : NORMAL
+
+ITALIC:
+  category: style
+  desc: "Enables italic text attribute"
+  usage: |
+    ITALIC
+    PRINT "Emphasised"
+    NORMAL
+
+  example: |
+    ITALIC : PRINT "Slanted" : NORMAL
+
+NORMAL:
+  category: style
+  desc: "Resets all text attributes to normal"
+  usage: |
+    BOLD
+    PRINT "bold"
+    NORMAL
+    PRINT "normal again"
+
+  example: |
+    BOLD : PRINT "Yes" : NORMAL : PRINT "No"
+
+RGB:
+  category: style
+  desc: "Sets text colour using 24-bit RGB values"
+  usage: |
+    RGB 255, 128, 0
+
+  example: |
+    RGB 255, 0, 0    ' Bright Red
+    PRINT "Red Text"
+
+RGBBG:
+  category: style
+  desc: "Sets background colour using 24-bit RGB values"
+  usage: |
+    RGBBG 0, 0, 128
+
+  example: |
+    ' Set background to dark blue
+    RGBBG 0, 0, 100
+    GCLS
+
+RGBFG:
+  category: style
+  desc: "Sets foreground colour using 24-bit RGB values"
+  usage: |
+    RGBFG 255, 255, 0
+
+  example: |
+    ' Set foreground to bright yellow
+    RGBFG 255, 255, 0
+    PRINT "Yellow Text"
+
+STYLE_RESET:
+  category: style
+  desc: "Resets all text style attributes to default"
+  usage: |
+    STYLE_RESET
+
+  example: |
+    BOLD : UNDERLINE : RGB 255, 0, 0
+    PRINT "Fancy Text"
+    STYLE_RESET
+    PRINT "Normal Text"
+
+UNDERLINE:
+  category: style
+  desc: "Enables underlined text attribute"
+  usage: |
+    UNDERLINE
+    PRINT "Underlined"
+    NORMAL
+
+  example: |
+    UNDERLINE : PRINT "Link Style" : NORMAL
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Terminal — Keyboard Input
+# ═══════════════════════════════════════════════════════════════════════════════
+
+INKEY:
+  category: keyboard
+  desc: "Waits for a keypress and returns the character code"
+  usage: |
+    key = INKEY
+
+  example: |
+    PRINT "Press any key..."
+    DIM k AS INTEGER
+    k = INKEY
+    PRINT "Key code: "; k
+
+KBCLEAR:
+  category: keyboard
+  desc: "Clears the keyboard buffer"
+  usage: |
+    KBCLEAR
+
+  example: |
+    ' Clear input buffer before critical operation
+    KBCLEAR
+    PRINT "Input buffer cleared"
+
+KBCOUNT:
+  category: keyboard
+  desc: "Returns the number of keys waiting in the keyboard buffer"
+  usage: |
+    n = KBCOUNT
+
+  example: |
+    ' Check if any keys are waiting
+    IF KBCOUNT > 0 THEN
+        PRINT "Buffer has input"
+    ELSE
+        PRINT "Buffer is empty"
+    END IF
+
+KBECHO:
+  category: keyboard
+  desc: "Enables or disables keyboard echo to the screen"
+  usage: |
+    KBECHO ON
+    KBECHO OFF
+
+  example: |
+    KBECHO OFF
+    PRINT "Password field (hidden): ";
+    ' ... get input ...
+    KBECHO ON
+
+KBFLUSH:
+  category: keyboard
+  desc: "Flushes (discards) all pending keyboard input"
+  usage: |
+    KBFLUSH
+
+  example: |
+    ' Discard any extra keys
+    KBFLUSH
+    PRINT "Buffer flushed"
+
+KBGET:
+  category: keyboard
+  desc: "Gets a single keypress from the keyboard buffer (waits if empty)"
+  usage: |
+    key = KBGET
+
+  example: |
+    PRINT "Press any key..."
+    DIM k AS INTEGER = KBGET
+    PRINT "You pressed: "; CHR$(k)
+
+KBHIT:
+  category: keyboard
+  desc: "Returns TRUE if a key has been pressed (non-blocking check)"
+  usage: |
+    IF KBHIT THEN
+      key = KBGET
+    END IF
+
+  example: |
+    DO
+        IF KBHIT THEN
+            PRINT "Key: "; KBGET
+            EXIT DO
+        END IF
+    LOOP
+
+KBINPUT:
+  category: keyboard
+  desc: "Reads a line of input from the keyboard"
+  usage: |
+    line$ = KBINPUT
+
+  example: |
+    PRINT "Type something: ";
+    DIM s AS STRING = KBINPUT
+    PRINT "You typed: "; s
+
+KBMOD:
+  category: keyboard
+  desc: "Returns the current keyboard modifier state (Shift, Ctrl, Alt)"
+  usage: |
+    mods = KBMOD
+
+  example: |
+    DIM m = KBMOD
+    IF m AND 1 THEN PRINT "Shift held"
+
+KBPEEK:
+  category: keyboard
+  desc: "Returns the next key in the buffer without removing it"
+  usage: |
+    key = KBPEEK
+
+  example: |
+    IF KBPEEK = 27 THEN PRINT "Escape is next"
+
+KBRAW:
+  category: keyboard
+  desc: "Gets raw keyboard input (scan codes, not translated)"
+  usage: |
+    code = KBRAW
+
+  example: |
+    PRINT "Press key for scan code: ";
+    PRINT KBRAW
+
+KBSPECIAL:
+  category: keyboard
+  desc: "Returns TRUE if the last keypress was a special key (arrow, F-key, etc.)"
+  usage: |
+    IF KBSPECIAL THEN PRINT "special key"
+
+  example: |
+    DIM k = KBGET
+    IF KBSPECIAL THEN PRINT "Special key detected"
+
+KBCODE:
+  category: keyboard
+  desc: "Returns the raw scan code of the last keypress"
+  usage: |
+    code = KBCODE
+
+  example: |
+    DIM key = KBGET
+    PRINT "Key: "; key; " Code: "; KBCODE
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Terminal — Paint / Buffered Output
+# ═══════════════════════════════════════════════════════════════════════════════
+
+BEGINPAINT:
+  category: terminal
+  desc: "Begins a buffered paint session — output is deferred until ENDPAINT"
+  usage: |
+    BEGINPAINT
+    CLS
+    LOCATE 1, 1 : PRINT "Header"
+    LOCATE 24, 1 : PRINT "Footer"
+    ENDPAINT
+
+  example: |
+    ' Prevent flickering during multi-line updates
+    BEGINPAINT
+    CLS
+    FOR i = 1 TO 20 : PRINT "Line "; i : NEXT i
+    ENDPAINT
+
+ENDPAINT:
+  category: terminal
+  desc: "Ends a buffered paint session and flushes output to the terminal"
+  usage: |
+    BEGINPAINT
+    ' ... draw operations ...
+    ENDPAINT
+
+  example: |
+    BEGINPAINT : PRINT "Atomic update" : ENDPAINT
+
+FLUSH:
+  category: terminal
+  desc: "Flushes pending terminal output immediately"
+  usage: |
+    FLUSH
+
+  example: |
+    PRINT "Working...";
+    FLUSH
+    ' ... some slow work ...
+    PRINT " Done"
+
+SCREENHEIGHT:
+  category: terminal
+  desc: "Returns the terminal height in rows"
+  usage: |
+    rows = SCREENHEIGHT
+
+  example: |
+    PRINT "Terminal height: "; SCREENHEIGHT; " rows"
+
+SCREENWIDTH:
+  category: terminal
+  desc: "Returns the terminal width in columns"
+  usage: |
+    cols = SCREENWIDTH
+
+  example: |
+    PRINT "Terminal width: "; SCREENWIDTH; " cols"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Text Layer
+# ═══════════════════════════════════════════════════════════════════════════════
+
+DRAWTEXT:
+  category: text_layer
+  desc: "Draws text and numbers at a specific position on the graphics screen"
+  usage: |
+    DRAWTEXT x, y, item1, item2, ..., colour [, size]
+  example: |
+    DRAWTEXT 10, 10, "Score: ", score, &HFFFFFFFF
+    ' Supports mixed literals and variables without string allocations:
+    DRAWTEXT 10, 30, "X: ", x, " Y: ", y; " Level ", lvl, &HFF00FFFF, 2.0
+
+TCHAR:
+  category: text_layer
+  desc: "Writes a character to a specific text grid cell"
+  usage: |
+    TCHAR col, row, char_code
+
+TCLEAR:
+  category: text_layer
+  desc: "Clears the text layer grid"
+  usage: |
+    TCLEAR
+
+TEXTHEIGHT:
+  category: text_layer
+  desc: "Returns the height of a text string in pixels"
+  usage: |
+    h = TEXTHEIGHT("Hello")
+
+TEXTPUT:
+  category: text_layer
+  desc: "Places a string at a specific position on the text grid"
+  usage: |
+    TEXTPUT col, row, "Score: 100"
+
+TEXTWIDTH:
+  category: text_layer
+  desc: "Returns the width of a text string in pixels"
+  usage: |
+    w = TEXTWIDTH("Hello")
+
+TGRID:
+  category: text_layer
+  desc: "Sets the dimensions of the text layer grid"
+  usage: |
+    TGRID cols, rows
+
+TSCROLL:
+  category: text_layer
+  desc: "Scrolls the text layer grid"
+  usage: |
+    TSCROLL direction, amount
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Graphics — Pixel & Primitive Drawing (VDU)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+CIRCLE:
+  category: graphics
+  desc: "Draws a circle outline"
+  usage: |
+    CIRCLE x, y, radius
+    CIRCLE x, y, radius, colour
+
+  example: |
+    CIRCLE 320, 240, 50, RGB(255, 255, 255)
+
+CIRCLEF:
+  category: graphics
+  desc: "Draws a filled circle"
+  usage: |
+    CIRCLEF x, y, radius
+    CIRCLEF x, y, radius, colour
+
+  example: |
+    CIRCLEF 100, 100, 30, RGB(255, 0, 0)
+
+CLG:
+  category: graphics
+  desc: "Clears the graphics screen (alias for GCLS)"
+  usage: |
+    CLG
+    CLG colour
+
+  example: |
+    GCLS RGB(0, 0, 0)
+
+GCLS:
+  category: graphics
+  desc: "Clears the graphics screen"
+  usage: |
+    GCLS
+    GCLS colour
+
+  example: |
+    ' Clear to dark blue
+    GCLS RGB(0, 0, 100)
+
+HLINE:
+  category: graphics
+  desc: "Draws a horizontal line"
+  usage: |
+    HLINE x1, x2, y
+    HLINE x1, x2, y, colour
+
+  example: |
+    HLINE 10, 200, 50, RGB(255, 255, 255)
+
+PGET:
+  category: graphics
+  desc: "Returns the colour of a pixel at the given coordinates"
+  usage: |
+    c = PGET(x, y)
+
+  example: |
+    DIM c = PGET(10, 10)
+    PRINT "Color: "; c
+
+PSET:
+  category: graphics
+  desc: "Sets the colour of a pixel"
+  usage: |
+    PSET x, y, colour
+
+  example: |
+    PSET 160, 100, RGB(255, 255, 0)
+
+RECT:
+  category: graphics
+  desc: "Draws a rectangle (outline or filled)"
+  usage: |
+    RECT x1, y1, x2, y2
+    RECT x1, y1, x2, y2, colour
+
+VLINE:
+  category: graphics
+  desc: "Draws a vertical line"
+  usage: |
+    VLINE x, y1, y2
+    VLINE x, y1, y2, colour
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Graphics — Retro Screen Window
+# ═══════════════════════════════════════════════════════════════════════════════
+
+BLIT:
+  category: graphics_screen
+  desc: "Copies a rectangular region from one buffer to another"
+  usage: |
+    BLIT src, dst, sx, sy, dx, dy, w, h
+
+BLITFLIP:
+  category: graphics_screen
+  desc: "Copies a region with horizontal/vertical flipping"
+  usage: |
+    BLITFLIP src, dst, sx, sy, dx, dy, w, h, flip_mode
+
+BLITSCALE:
+  category: graphics_screen
+  desc: "Copies a region with scaling"
+  usage: |
+    BLITSCALE src, dst, sx, sy, sw, sh, dx, dy, dw, dh
+
+BLITSOLID:
+  category: graphics_screen
+  desc: "Copies a region treating a colour as transparent"
+  usage: |
+    BLITSOLID src, dst, sx, sy, dx, dy, w, h, transparent_colour
+
+ELLIPSE:
+  category: graphics_screen
+  desc: "Draws an ellipse"
+  usage: |
+    ELLIPSE x, y, rx, ry
+    ELLIPSE x, y, rx, ry, colour
+
+FILLAREA:
+  category: graphics_screen
+  desc: "Flood-fills an area starting at the given point"
+  usage: |
+    FILLAREA x, y, fill_colour
+
+FLIP:
+  category: graphics_screen
+  desc: "Swaps front and back screen buffers (double buffering)"
+  usage: |
+    FLIP
+
+FRONTBUFFER:
+  category: graphics_screen
+  desc: "Directs drawing to the front (visible) buffer"
+  usage: |
+    FRONTBUFFER
+
+GCOMMIT:
+  category: graphics_screen
+  desc: "Commits pending graphics operations to the screen"
+  usage: |
+    GCOMMIT
+
+GLINE:
+  category: graphics_screen
+  desc: "Draws a line on the graphics screen"
+  usage: |
+    GLINE x1, y1, x2, y2
+    GLINE x1, y1, x2, y2, colour
+
+GSCROLL:
+  category: graphics_screen
+  desc: "Scrolls the graphics screen by a pixel offset"
+  usage: |
+    GSCROLL dx, dy
+
+GWAIT:
+  category: graphics_screen
+  desc: "Waits for vertical blank (frame sync on the graphics screen)"
+  usage: |
+    GWAIT
+
+SCREEN:
+  category: graphics_screen
+  desc: "Opens a retro graphics window with specified dimensions and mode"
+  usage: |
+    SCREEN width, height
+    SCREEN width, height, mode
+    SCREEN 320, 240, 8
+
+SCREENACTIVE:
+  category: graphics_screen
+  desc: "Sets which screen is the active drawing target"
+  usage: |
+    SCREENACTIVE screen_id
+
+SCREENCLOSE:
+  category: graphics_screen
+  desc: "Closes a graphics screen window"
+  usage: |
+    SCREENCLOSE
+    SCREENCLOSE screen_id
+
+SCREENMODE:
+  category: graphics_screen
+  desc: "Sets or queries the screen mode (bit depth, etc.)"
+  usage: |
+    SCREENMODE mode
+
+SCREENTITLE:
+  category: graphics_screen
+  desc: "Sets the title bar text of the graphics window"
+  usage: |
+    SCREENTITLE "My Application"
+
+SETSCROLL:
+  category: graphics_screen
+  desc: "Sets the scroll offset for the graphics screen"
+  usage: |
+    SETSCROLL x_offset, y_offset
+
+SETTARGET:
+  category: graphics_screen
+  desc: "Sets the drawing target to a specific screen or buffer"
+  usage: |
+    SETTARGET screen_id
+
+TRIANGLE:
+  category: graphics_screen
+  desc: "Draws a filled triangle"
+  usage: |
+    TRIANGLE x1, y1, x2, y2, x3, y3
+    TRIANGLE x1, y1, x2, y2, x3, y3, colour
+
+VSYNC:
+  category: graphics_screen
+  desc: "Waits for vertical sync (frame timing)"
+  usage: |
+    VSYNC
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Graphics — Palette
+# ═══════════════════════════════════════════════════════════════════════════════
+
+LINEPALETTE:
+  category: palette
+  desc: "Sets a per-scanline palette for raster effects"
+  usage: |
+    LINEPALETTE line, index, r, g, b
+
+LINEPALETTEGET:
+  category: palette
+  desc: "Gets the palette colour for a specific scanline"
+  usage: |
+    LINEPALETTEGET line, index, r, g, b
+
+PALCYCLE:
+  category: palette
+  desc: "Initiates automatic cycling for a range of global palette entries (Indices 16-255)"
+  usage: |
+    PALCYCLE start_index, end_index, speed
+
+  example: |
+    ' Rainbow cycle on global colors
+    FOR i = 16 TO 31 : PALETTE i, RND(0,256), RND(0,256), RND(0,256) : NEXT i
+    PALCYCLE 16, 31, 5
+
+PALFADE:
+  category: palette
+  desc: "Fades the palette towards a target colour"
+  usage: |
+    PALFADE target_r, target_g, target_b, speed
+
+PALGRADIENT:
+  category: palette
+  desc: "Sets a range of palette entries to a colour gradient"
+  usage: |
+    PALGRADIENT start_index, end_index, r1, g1, b1, r2, g2, b2
+
+PALETTE:
+  category: palette
+  desc: "Sets a global (per-screen) palette entry to an RGB colour (Indices 16-255)"
+  usage: |
+    PALETTE index, r, g, b
+
+  example: |
+    PALETTE 16, 255, 0, 0    ' Red
+    PALETTE 17, 0, 255, 0    ' Green
+    PALETTE 18, 0, 0, 255    ' Blue
+
+PALETTEGET:
+  category: palette
+  desc: "Gets the RGB values of a palette entry"
+  usage: |
+    PALETTEGET index, r, g, b
+
+PALPAUSE:
+  category: palette
+  desc: "Pauses active palette animations"
+  usage: |
+    PALPAUSE
+
+PALPULSE:
+  category: palette
+  desc: "Starts a pulsing palette animation"
+  usage: |
+    PALPULSE start_index, end_index, speed
+
+PALRESUME:
+  category: palette
+  desc: "Resumes paused palette animations"
+  usage: |
+    PALRESUME
+
+PALSTOP:
+  category: palette
+  desc: "Stops a specific palette animation"
+  usage: |
+    PALSTOP
+
+PALSTOPALL:
+  category: palette
+  desc: "Stops all active palette animations"
+  usage: |
+    PALSTOPALL
+
+PALSTROBE:
+  category: palette
+  desc: "Starts a strobing palette animation"
+  usage: |
+    PALSTROBE start_index, end_index, speed
+
+RESETPALETTE:
+  category: palette
+  desc: "Resets all palette entries to default colours"
+  usage: |
+    RESETPALETTE
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Graphics — Collision Detection
+# ═══════════════════════════════════════════════════════════════════════════════
+
+GCOLLIDE:
+  category: collision
+  desc: "Performs a fast circle-based collision test between two sprite instances"
+  usage: |
+    result = GCOLLIDE(inst_a, inst_b)
+  example: |
+    ' Simple circle check
+    IF GCOLLIDE(player_inst, enemy_inst) THEN
+      PRINT "Hit!"
+    END IF
+
+GCOLLIDERESULT:
+  category: collision
+  desc: "Returns detailed distance/intersection info about the last GCOLLIDE test"
+  usage: |
+    info = GCOLLIDERESULT
+  example: |
+    IF GCOLLIDE(1, 2) THEN
+      DIM d AS FLOAT = GCOLLIDERESULT
+      PRINT "Intersection depth: "; d
+    END IF
+
+GCOLLIDESETUP:
+  category: collision
+  desc: "Configures current collision mode (0: Circle, 1: Box, 2: Pixel)"
+  usage: |
+    GCOLLIDESETUP mode
+  example: |
+    GCOLLIDESETUP 1  ' Use bounding boxes
+    IF GCOLLIDE(1, 2) THEN PRINT "Box Collision"
+
+GCOLLIDESRC:
+  category: collision
+  desc: "Sets the reference instance for multi-target collision testing"
+  usage: |
+    GCOLLIDESRC inst_id
+  example: |
+    ' Setup source once
+    GCOLLIDESRC player_inst
+    ' Then test many targets against it efficiently
+    IF GCOLLIDETEST(enemy1_inst) THEN PRINT "Hit 1"
+    IF GCOLLIDETEST(enemy2_inst) THEN PRINT "Hit 2"
+
+GCOLLIDETEST:
+  category: collision
+  desc: "Tests the preset source against a target instance"
+  usage: |
+    hit = GCOLLIDETEST(target_inst)
+  example: |
+    GCOLLIDESRC 0
+    FOR i = 1 TO 10
+      IF GCOLLIDETEST(i) THEN SPRHIDE i
+    NEXT i
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Graphics — Screen Queries
+# ═══════════════════════════════════════════════════════════════════════════════
+
+GBUFFERHEIGHT:
+  category: graphics_query
+  desc: "Returns the height of the graphics back buffer in pixels"
+  usage: |
+    h = GBUFFERHEIGHT
+
+  example: |
+    PRINT "Back buffer height: "; GBUFFERHEIGHT
+
+GBUFFERWIDTH:
+  category: graphics_query
+  desc: "Returns the width of the graphics back buffer in pixels"
+  usage: |
+    w = GBUFFERWIDTH
+
+  example: |
+    PRINT "Back buffer width: "; GBUFFERWIDTH
+
+GFENCE:
+  category: graphics_query
+  desc: "Inserts a fence to ensure all prior drawing is complete"
+  usage: |
+    GFENCE
+
+  example: |
+    GFENCE
+    PRINT "Fence inserted"
+
+GFENCEDONE:
+  category: graphics_query
+  desc: "Checks whether a previously inserted GFENCE has completed"
+  usage: |
+    IF GFENCEDONE THEN PRINT "ready"
+
+  example: |
+    GFENCE
+    DO : LOOP UNTIL GFENCEDONE
+    PRINT "Graphics sync complete"
+
+GINKEY:
+  category: graphics_query
+  desc: "Returns the last keypress from the graphics window"
+  usage: |
+    key = GINKEY
+
+  example: |
+    DIM k AS INTEGER = GINKEY
+    IF k <> 0 THEN PRINT "Last key: "; k
+
+GKEYDOWN:
+  category: graphics_query
+  desc: "Returns TRUE if a specific key is currently held down"
+  usage: |
+    IF GKEYDOWN(key_code) THEN PRINT "pressed"
+
+  example: |
+    IF GKEYDOWN(27) THEN PRINT "Escape is held down"
+
+GMOUSEBUTTON:
+  category: graphics_query
+  desc: "Returns the mouse button state in the graphics window"
+  usage: |
+    btn = GMOUSEBUTTON
+
+  example: |
+    DIM b AS INTEGER = GMOUSEBUTTON
+    IF b AND 1 THEN PRINT "Left button down"
+
+GMOUSESCROLL:
+  category: graphics_query
+  desc: "Returns the mouse scroll wheel delta"
+  usage: |
+    scroll = GMOUSESCROLL
+
+  example: |
+    DIM s AS DOUBLE = GMOUSESCROLL
+    IF s <> 0 THEN PRINT "Scroll delta: "; s
+
+GMOUSEX:
+  category: graphics_query
+  desc: "Returns the mouse X position in the graphics window"
+  usage: |
+    mx = GMOUSEX
+
+  example: |
+    PRINT "Mouse position: "; GMOUSEX; ", "; GMOUSEY
+
+GMOUSEY:
+  category: graphics_query
+  desc: "Returns the mouse Y position in the graphics window"
+  usage: |
+    my = GMOUSEY
+
+  example: |
+    PRINT "Mouse Y: "; GMOUSEY
+
+GSCREENHEIGHT:
+  category: graphics_query
+  desc: "Returns the height of the graphics screen in pixels"
+  usage: |
+    h = GSCREENHEIGHT
+
+  example: |
+    PRINT "Screen: "; GSCREENWIDTH; "x"; GSCREENHEIGHT
+
+GSCREENWIDTH:
+  category: graphics_query
+  desc: "Returns the width of the graphics screen in pixels"
+  usage: |
+    w = GSCREENWIDTH
+
+  example: |
+    PRINT "Screen Width: "; GSCREENWIDTH
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Sprites
+# ═══════════════════════════════════════════════════════════════════════════════
+
+SPREXPLODE:
+  category: sprite
+  desc: "Triggers an explosion animation on a sprite"
+  usage: |
+    SPREXPLODE sprite_id
+
+SPRFREE:
+  category: sprite
+  desc: "Frees (unloads) a sprite and its resources"
+  usage: |
+    SPRFREE sprite_id
+
+SPRHIDE:
+  category: sprite
+  desc: "Hides a sprite (makes it invisible without freeing it)"
+  usage: |
+    SPRHIDE sprite_id
+
+SPRLOAD:
+  category: sprite
+  desc: "Loads a sprite image from a file or resource"
+  usage: |
+    sprite_id = SPRLOAD("sprite.png")
+    sprite_id = SPRLOAD("sheet.png", frame_w, frame_h)
+
+SPRMOVE:
+  category: sprite
+  desc: "Moves a sprite to a new position"
+  usage: |
+    SPRMOVE sprite_id, x, y
+
+SPRPOS:
+  category: sprite
+  desc: "Returns the current position of a sprite"
+  usage: |
+    x = SPRPOS(sprite_id, 0)   ' x position
+    y = SPRPOS(sprite_id, 1)   ' y position
+
+SPRROT:
+  category: sprite
+  desc: "Rotates a sprite by a given angle"
+  usage: |
+    SPRROT sprite_id, angle
+
+SPRSCALE:
+  category: sprite
+  desc: "Scales a sprite"
+  usage: |
+    SPRSCALE sprite_id, scale_x, scale_y
+
+SPRSHOW:
+  category: sprite
+  desc: "Shows a previously hidden sprite"
+  usage: |
+    SPRSHOW sprite_id
+
+SPRTINT:
+  category: sprite
+  desc: "Applies a colour tint to a sprite"
+  usage: |
+    SPRTINT sprite_id, r, g, b
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Audio
+# ═══════════════════════════════════════════════════════════════════════════════
+
+PLAY:
+  category: audio
+  desc: "Plays a sound or music file"
+  usage: |
+    PLAY "music.mp3"
+    PLAY "sound.wav", volume
+    PLAY channel, "effect.wav"
+
+  example: |
+    ' Play a wave file (requires file in assets or same folder)
+    PLAY "success.wav"
+    WAIT 50
+
+SOUND:
+  category: audio
+  desc: "Sound subsystem — create, play, and manage sound effects"
+  usage: |
+    ' ── Predefined game SFX (returns slot ID) ──
+    SOUND BEEP slot, frequency, duration
+    SOUND ZAP slot, frequency, duration
+    SOUND EXPLODE slot, size, duration
+    SOUND BIGEXPLODE slot, size, duration
+    SOUND SMALLEXPLODE slot, intensity, duration
+    SOUND DISTANTEXPLODE slot, distance, duration
+    SOUND METALEXPLODE slot, shrapnel, duration
+    SOUND BANG slot, intensity, duration
+    SOUND COIN slot, pitch, duration
+    SOUND JUMP slot, power, duration
+    SOUND POWERUP slot, intensity, duration
+    SOUND HURT slot, severity, duration
+    SOUND SHOOT slot, power, duration
+    SOUND CLICK slot, sharpness, duration
+    SOUND BLIP slot, pitch, duration
+    SOUND PICKUP slot, brightness, duration
+    SOUND SWEEPUP slot, startFreq, endFreq, duration
+    SOUND SWEEPDOWN slot, startFreq, endFreq, duration
+    SOUND RANDOMBEEP slot, seed, duration
+    ' ── Custom synthesis ──
+    SOUND TONE slot, freq, dur, waveform
+    SOUND NOTE slot, midi, dur, wf, attack, decay, sustain, release
+    SOUND NOISE slot, noiseType, dur
+    SOUND FM slot, carrierFreq, modFreq, modIndex, dur
+    SOUND FILTER TONE slot, freq, dur, wf, filterType, cutoff, resonance
+    SOUND FILTER NOTE slot, midi, dur, wf, a, d, s, r, ftype, cut, res
+    ' ── Effects processing ──
+    SOUND REVERB slot, freq, dur, wf, roomSize, damping, wet
+    SOUND DELAY slot, freq, dur, wf, delayTime, feedback, mix
+    SOUND DISTORT slot, freq, dur, wf, drive, tone, level
+    ' ── Playback & management ──
+    SOUND PLAY slot [, volume [, pan]]
+    SOUND FREE slot
+    SOUND FREE ALL
+    SOUND VOLUME level
+    SOUND STOP
+    ' ── Related Guides ──
+    ' articles/audio-system-guide.md
+    ' articles/sound-command.md
+    ' articles/ABCplayer.md
+    ' articles/introduction_voicescript.md
+
+  example: |
+    ' Setup arcade SFX slots
+    SOUND COIN 1, 1.2, 0.1
+    SOUND JUMP 2, 0.9, 0.15
+    SOUND SHOOT 3, 1.0, 0.08
+    SOUND POWERUP 4, 1.0, 0.3
+    SOUND EXPLODE 5, 1.0, 0.5
+
+    PRINT "Playing Arcady SFX sequence..."
+    SOUND PLAY 1 : WAIT 15
+    SOUND PLAY 1 : WAIT 15
+    SOUND PLAY 2 : WAIT 40
+    SOUND PLAY 3 : WAIT 15
+    SOUND PLAY 4 : WAIT 50
+    SOUND PLAY 5 : WAIT 80
+
+MUSIC:
+  category: audio
+  desc: "Music subsystem — load and play ABC notation music"
+  usage: |
+    MUSIC PLAY "X:1\nT:Song\nK:C\nCDEF|"
+    MUSIC PLAY "X:1\nT:Song\nK:C\nCDEF|", 0.8
+    MUSIC PLAY slot
+    MUSIC PLAY slot, volume
+    MUSIC LOAD slot, "X:1\nT:Song\nK:C\nCDEF|"
+    MUSIC LOAD FILE slot, "song.abc"
+    MUSIC STOP
+    MUSIC PAUSE
+    MUSIC RESUME
+    MUSIC VOLUME level
+    MUSIC FREE slot
+    MUSIC FREE ALL
+    MUSIC RENDER slot, "abc$", soundSlot [, duration, sampleRate]
+    MUSIC RENDER WAV "abc$", "output.wav" [, duration, sampleRate]
+    MUSIC EXPORT MIDI slot, "output.mid"
+    ' ── Related Guides ──
+    ' articles/audio-system-guide.md
+    ' articles/ABCplayer.md
+    ' articles/sound-command.md
+    ' articles/introduction_voicescript.md
+
+  example: |
+    ' Arcade Fanfare (Multi-voice ABC)
+    DIM fan$ = "X:1\nM:4/4\nL:1/8\nQ:1/4=150\nK:C\n"
+    fan$ &= "V:1 name=Lead program=80\n"
+    fan$ &= "V:2 name=Bass program=37\n"
+    fan$ &= "[V:1] c2 e2 g2 c'2 | b2 a2 g2 f2 | e4 c4 |]\n"
+    fan$ &= "[V:2] C,2 G,,2 C,2 G,,2 | F,,2 C,,2 G,,2 D,,2 | C,4 C,,4 |]"
+    
+    MUSIC PLAY fan$
+    PRINT "Playing fanfare..."
+    WAIT 300
+    MUSIC STOP
+
+VS:
+  category: audio
+  desc: "Voice Synthesiser — real-time polyphonic software synth"
+  usage: |
+    ' ── Oscillator ──
+    VS WAVEFORM voice, waveformType
+    VS FREQUENCY voice, hz
+    VS NOTE voice, midiNote
+    VS NOTENAME voice, "C-4"
+    VS PULSE voice, width
+    ' ── Envelope & Gate ──
+    VS ENVELOPE voice, attack, decay, sustain, release
+    VS GATE voice, ON/OFF
+    ' ── Volume & Pan ──
+    VS VOLUME voice, level
+    VS PAN voice, position
+    VS MASTER level
+    ' ── Filter ──
+    VS FILTER TYPE filterType
+    VS FILTER CUTOFF hz
+    VS FILTER RESONANCE q
+    VS FILTER ON
+    VS FILTER OFF
+    VS FILTER ROUTE voice, ON/OFF
+    ' ── Modulation ──
+    VS RING voice, sourceVoice
+    VS SYNC voice, sourceVoice
+    VS PORTAMENTO voice, seconds
+    VS DETUNE voice, cents
+    ' ── Per-Voice Delay ──
+    VS DELAY voice, ON/OFF
+    VS DELAY TIME voice, seconds
+    VS DELAY FEEDBACK voice, amount
+    VS DELAY MIX voice, wetDry
+    ' ── LFO ──
+    VS LFO WAVEFORM lfo, waveform
+    VS LFO RATE lfo, hz
+    VS LFO RESET lfo
+    VS LFO PITCH voice, lfo, depth
+    VS LFO VOLUME voice, lfo, depth
+    VS LFO FILTER voice, lfo, depth
+    VS LFO PULSE voice, lfo, depth
+    ' ── Physical Modeling ──
+    VS PHYSICAL voice, model
+    VS PHYSICAL DAMPING voice, val
+    VS PHYSICAL BRIGHTNESS voice, val
+    VS PHYSICAL EXCITATION voice, val
+    VS PHYSICAL RESONANCE voice, val
+    VS PHYSICAL TENSION voice, val
+    VS PHYSICAL PRESSURE voice, val
+    VS PHYSICAL TRIGGER voice
+    ' ── Global Control ──
+    VS RESET
+    VS STOP
+    ' ── Recording ──
+    VS RECORD START
+    VS RECORD TEMPO bpm
+    VS RECORD WAIT beats
+    VS RECORD SAVE slot, volume
+    VS RECORD PLAY
+    VS RECORD WAV "filename.wav"
+    ' ── Related Guides ──
+    ' articles/audio-system-guide.md
+    ' articles/introduction_voicescript.md
+    ' articles/advanced_voicescript.md
+    ' articles/workers.md
+
+  example: |
+    ' Fun synth lead with built-in Echo (VS DELAY)
+    VS RESET
+    VS WAVEFORM 1, 3      ' Sawtooth
+    VS ENVELOPE 1, 0.05, 0.1, 0.5, 0.4
+    
+    ' Setup rhythmic echo
+    VS DELAY 1, ON
+    VS DELAY TIME 1, 0.25
+    VS DELAY FEEDBACK 1, 0.6
+    VS DELAY MIX 1, 0.5
+    
+    PRINT "Synth sequence..."
+    FOR pitch = 60 TO 72 STEP 4
+        VS NOTE 1, pitch
+        VS GATE 1, ON
+        WAIT 10 : VS GATE 1, OFF
+        WAIT 40
+    NEXT
+    
+    PRINT "Echoes ringing out..."
+    WAIT 200
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Joystick / Gamepad
+# ═══════════════════════════════════════════════════════════════════════════════
+
+JOYAXIS:
+  category: joystick
+  desc: "Returns the value of a joystick/gamepad axis (-1.0 to 1.0)"
+  usage: |
+    x = JOYAXIS(joy_id, axis_id)
+  example: |
+    ' Get first joystick, horizontal axis (0)
+    vx = JOYAXIS(0, 0)
+    vy = JOYAXIS(0, 1)
+    PRINT "Stick: "; vx; ", "; vy
+
+JOYBUTTON:
+  category: joystick
+  desc: "Returns TRUE if a joystick button is currently pressed"
+  usage: |
+    IF JOYBUTTON(joy_id, button_id) THEN PRINT "pressed"
+  example: |
+    ' Button 0 is usually the primary action (A/X)
+    IF JOYBUTTON(0, 0) THEN 
+       SOUND 1, 440, 5, 10
+    END IF
+
+JOYCOUNT:
+  category: joystick
+  desc: "Returns the number of connected gamepads detected by the OS"
+  usage: |
+    n = JOYCOUNT
+  example: |
+    DIM count AS INTEGER = JOYCOUNT
+    IF count = 0 THEN
+       PRINT "Please connect a gamepad"
+    ELSE
+       PRINT "Found "; count; " device(s)"
+    END IF
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Timing
+# ═══════════════════════════════════════════════════════════════════════════════
+
+AFTER:
+  category: timing
+  desc: "Schedules a subroutine to run once after a delay"
+  usage: |
+    AFTER delay GOSUB handler
+    AFTER 1000 MS GOSUB OnTimeout
+    AFTER 5 SECS GOSUB Cleanup
+
+  example: |
+    SUB Task() : PRINT "Time is up!" : END SUB
+    AFTER 250 MS GOSUB Task
+
+EVERY:
+  category: timing
+  desc: "Schedules a subroutine to run repeatedly at a fixed interval"
+  usage: |
+    EVERY interval GOSUB handler
+    EVERY 100 MS GOSUB OnTick
+    EVERY 1 SECS GOSUB UpdateClock
+
+  example: |
+    SUB Tick() : PRINT "." : END SUB
+    EVERY 100 MS GOSUB Tick
+
+FRAMES:
+  category: timing
+  desc: "Time unit: frame ticks (for AFTER/EVERY with frame-based timing)"
+  usage: |
+    AFTER 60 FRAMES GOSUB OnSecond
+
+  example: |
+    EVERY 60 FRAMES GOSUB PerSecondTick
+
+MS:
+  category: timing
+  desc: "Time unit: milliseconds"
+  usage: |
+    WAIT 50 MS
+    AFTER 1000 MS GOSUB handler
+
+  example: |
+    WAIT 75
+
+SECS:
+  category: timing
+  desc: "Time unit: seconds"
+  usage: |
+    WAIT 200
+    EVERY 1 SECS GOSUB UpdateClock
+
+  example: |
+    WAIT_MS 10 * 1000  ' 10 seconds wait
+    WAIT 300
+
+TIMER:
+  category: timing
+  desc: "Returns the elapsed time since program start (in centiseconds)"
+  usage: |
+    t = TIMER
+    elapsed = TIMER - start_time
+
+  example: |
+    DIM t1 AS LONG
+    DIM t2 AS LONG
+    t1 = TIMER
+    FOR i = 1 TO 1000000 : NEXT i
+    t2 = TIMER
+    PRINT "Centiseconds elapsed: "; t2 - t1
+
+MINUTES:
+  category: timing
+  desc: "Time unit: minutes (for AFTER/EVERY timing)"
+  usage: |
+    AFTER 5 MINUTES GOSUB LongTimeout
+    EVERY 1 MINUTES GOSUB Heartbeat
+
+  example: |
+    AFTER 1 MINUTES GOSUB OneMinuteReminder
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  System / Shell
+# ═══════════════════════════════════════════════════════════════════════════════
+
+COMMAND:
+  category: system
+  desc: "Returns the command-line arguments passed to the program"
+  usage: |
+    args$ = COMMAND
+    arg$ = COMMAND(n)
+
+  example: |
+    PRINT "All args: "; COMMAND
+    FOR i = 1 TO COMMANDCOUNT
+        PRINT "Arg "; i; " is "; COMMAND(i)
+    NEXT i
+
+COMMANDCOUNT:
+  category: system
+  desc: "Returns the number of command-line arguments"
+  usage: |
+    n = COMMANDCOUNT
+
+  example: |
+    PRINT "Number of arguments: "; COMMANDCOUNT
+
+RUN:
+  category: system
+  desc: "Restarts the current program from the beginning"
+  usage: |
+    RUN
+
+  example: |
+    IF restarts < 3 THEN
+        restarts = restarts + 1
+        RUN
+    END IF
+
+SHELL:
+  category: system
+  desc: "Executes an operating system command"
+  usage: |
+    SHELL "ls -la"
+    result = SHELL("command")
+
+  example: |
+    ' Simple shell execution:
+    SHELL "ls -l"
+    ' Capturing exit code:
+    DIM status AS INTEGER
+    status = SHELL("ls /nonexistent")
+    PRINT "Exit status: "; status
+
+SYSTEM:
+  category: system
+  desc: "Terminates the program and returns to the operating system"
+  usage: |
+    SYSTEM
+    SYSTEM exit_code
+
+  example: |
+    ' Terminate with success:
+    SYSTEM 0
+    ' Terminate with failure:
+    PRINT "Error occurred!"
+    SYSTEM 1
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Miscellaneous
+# ═══════════════════════════════════════════════════════════════════════════════
+
+LINE:
+  category: graphics
+  desc: "Draws a line between two points"
+  usage: |
+    LINE x1, y1, x2, y2
+    LINE x1, y1, x2, y2, colour
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  GPU Sprites
+# ═══════════════════════════════════════════════════════════════════════════════
+
+SPRITE:
+  category: gpu_sprite
+  desc: "Places a sprite instance on screen (or issues a subcommand). Definitions hold pixel data (0–1023), instances are placed copies (0–255)."
+  usage: |
+    SPRITE inst, def, x, y
+    SPRITE DEF id, w, h
+    SPRITE DATA id, x, y, colour_index
+    SPRITE COMMIT id
+    SPRITE PALETTE id, idx, r, g, b
+    SPRITE STD PAL id, palette_id
+    SPRITE FRAMES id, fw, fh, count
+    SPRITE LOAD id, "file.sprtz"
+    SPRITE SHOW inst
+    SPRITE HIDE inst
+    SPRITE REMOVE inst
+    SPRITE REMOVE ALL
+    SPRITE POS inst, x, y
+    SPRITE MOVE inst, dx, dy
+    SPRITE ROT inst, angle_degrees
+    SPRITE SCALE inst, sx, sy
+    SPRITE ANCHOR inst, ax, ay
+    SPRITE FLIP inst, h, v
+    SPRITE ALPHA inst, a
+    SPRITE PRIORITY inst, pri
+    SPRITE BLEND inst, mode
+    SPRITE FRAME inst, n
+    SPRITE ANIMATE inst, speed
+    SPRITE GLOW inst, radius, r, g, b
+    SPRITE OUTLINE inst, thickness, r, g, b
+    SPRITE SHADOW inst, ox, oy, a, r, g, b
+    SPRITE TINT inst, factor, r, g, b
+    SPRITE FLASH inst, speed, r, g, b
+    SPRITE FX inst, effect_type
+  example: |
+    ' Setup a 16x16 sprite: allocate, draw, commit
+    SPRITE DEF 0, 16, 16
+    FOR y = 0 TO 15 : FOR x = 0 TO 15
+      SPRITE DATA 0, x, y, (x+y) MOD 16
+    NEXT x : NEXT y
+    SPRITE COMMIT 0
+    
+    ' Create and configure instance
+    SPRITE 0, 0, 160, 100
+    SPRITE SHOW 0
+    SPRITE SCALE 0, 4, 4
+    SPRITE ANIMATE 0, 0.2
+    SPRITE GLOW 0, 10, 255, 200, 0
+    SPRITE PAL OVERRIDE inst, def_id
+    SPRITE PAL RESET inst
+    SPRITE COLLIDE inst, group
+    SPRITE REMOVE inst
+    SPRITE REMOVE ALL
+    SPRITE SYNC
+
+SPRITEX:
+  category: gpu_sprite
+  desc: "Returns the current X position of a sprite instance"
+  usage: |
+    x = SPRITEX(inst)
+  example: |
+    PRINT "Enemy X: "; SPRITEX(1)
+
+SPRITEY:
+  category: gpu_sprite
+  desc: "Returns the current Y position of a sprite instance"
+  usage: |
+    y = SPRITEY(inst)
+  example: |
+    PRINT "Enemy Y: "; SPRITEY(1)
+
+SPRITEGETROT:
+  category: gpu_sprite
+  desc: "Returns the current rotation angle (degrees) of a sprite instance"
+  usage: |
+    angle = SPRITEGETROT(inst)
+  example: |
+    PRINT "Rotation: "; SPRITEGETROT(0)
+
+SPRITEVISIBLE:
+  category: gpu_sprite
+  desc: "Returns 1 if the sprite instance is visible (SHOW), 0 if hidden (HIDE)"
+  usage: |
+    IF SPRITEVISIBLE(inst) THEN PRINT "visible"
+  example: |
+    IF NOT SPRITEVISIBLE(player) THEN 
+       PRINT "Respawning..."
+    END IF
+
+SPRITEGETFRAME:
+  category: gpu_sprite
+  desc: "Returns the current animation frame index of a sprite instance"
+  usage: |
+    f = SPRITEGETFRAME(inst)
+  example: |
+    IF SPRITEGETFRAME(0) = 3 THEN
+       PRINT "Animation Cycle Complete"
+    END IF
+
+SPRITEHIT:
+  category: gpu_sprite
+  desc: "Tests bounding-box collision between two sprite instances. Returns 1 if they overlap, 0 otherwise."
+  usage: |
+    IF SPRITEHIT(a, b) THEN PRINT "hit!"
+
+SPRITECOUNT:
+  category: gpu_sprite
+  desc: "Returns the number of active sprite instances"
+  usage: |
+    n = SPRITECOUNT()
+
+SPRITEOVERLAP:
+  category: gpu_sprite
+  desc: "Tests whether any sprite in collision group A overlaps any sprite in group B. Returns 1 if overlap detected."
+  usage: |
+    IF SPRITEOVERLAP(1, 2) THEN PRINT "groups collide"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  ARM64 Bit-Manipulation Intrinsics
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+#  These functions compile directly to dedicated ARM64 instructions — no
+#  runtime library call overhead.  They give BASIC programmers easy access
+#  to the processor's powerful bitfield extraction, insertion, and counting
+#  instructions (UBFX, SBFX, BFI, BFC, CLZ, RBIT, REV, CNT).
+
+BITGET:
+  category: bit_manipulation
+  desc: "Get a single bit from a value — returns 0 or 1"
+  usage: |
+    result% = BITGET(value%, bitPosition%)
+
+  example: |
+    PRINT BITGET(&HFF, 3)   ' 1
+    PRINT BITGET(&HF0, 2)   ' 0
+    PRINT BITGET(2, 1)      ' 1 (2 is 10b)
+
+BITSET:
+  category: bit_manipulation
+  desc: "Set (turn on) a single bit — returns the modified value"
+  usage: |
+    result% = BITSET(value%, bitPosition%)
+
+  example: |
+    PRINT BITSET(0, 4)      ' 16 (&H10)
+    PRINT BITSET(7, 3)      ' 15 (0111b -> 1111b)
+
+BITCLR:
+  category: bit_manipulation
+  desc: "Clear (turn off) a single bit — returns the modified value"
+  usage: |
+    result% = BITCLR(value%, bitPosition%)
+
+  example: |
+    PRINT BITCLR(&HFF, 3)   ' 247 (&HF7)
+    PRINT BITCLR(15, 0)     ' 14 (1111b -> 1110b)
+
+BITTGL:
+  category: bit_manipulation
+  desc: "Toggle (flip) a single bit — returns the modified value"
+  usage: |
+    result% = BITTGL(value%, bitPosition%)
+
+  example: |
+    PRINT BITTGL(5, 0)      ' 4 (101b -> 100b)
+    PRINT BITTGL(4, 0)      ' 5 (100b -> 101b)
+
+BITFIELD:
+  category: bit_manipulation
+  desc: "Extract an unsigned bitfield — ARM64 UBFX instruction"
+  usage: |
+    result% = BITFIELD(value%, startBit%, width%)
+
+  example: |
+    PRINT HEX$(BITFIELD(&HABCD, 8, 4))   ' B
+    ' Extract low byte:
+    DIM word AS INTEGER = &H1234
+    PRINT HEX$(BITFIELD(word, 0, 8))     ' 34
+
+BITSFIELD:
+  category: bit_manipulation
+  desc: "Extract a signed bitfield (sign-extends the result) — ARM64 SBFX instruction"
+  usage: |
+    result% = BITSFIELD(value%, startBit%, width%)
+
+  example: |
+    ' Extract a 5-bit signed value from bits 4-8:
+    ' &H1F0 is 1_1111_0000 in binary.
+    ' Bits 4-8 are 11111 (binary for -1 if 5-bit signed)
+    PRINT BITSFIELD(&H1F0, 4, 5)   ' -1
+
+BITINS:
+  category: bit_manipulation
+  desc: "Insert a bitfield into a value — ARM64 BFI instruction"
+  usage: |
+    result% = BITINS(dest%, source%, startBit%, width%)
+
+  example: |
+    ' Insert &HA (1010b) into &HF00F at bit 8 (width 4):
+    PRINT HEX$(BITINS(&HF00F, &HA, 8, 4))  ' FA0F
+
+BITCLRF:
+  category: bit_manipulation
+  desc: "Clear (zero out) a range of bits — ARM64 BFC instruction"
+  usage: |
+    result% = BITCLRF(value%, startBit%, width%)
+
+  example: |
+    ' Clear bits 4-7:
+    PRINT HEX$(BITCLRF(&HFFFF, 4, 4))   ' FF0F
+
+CLZ:
+  category: bit_manipulation
+  desc: "Count leading zeros — ARM64 CLZ instruction"
+  usage: |
+    n% = CLZ(value%)
+
+  example: |
+    PRINT CLZ(1)        ' 63 (on a 64-bit value)
+    PRINT CLZ(&H8000000000000000)  ' 0
+    PRINT CLZ(0)        ' 64
+
+CTZ:
+  category: bit_manipulation
+  desc: "Count trailing zeros — ARM64 RBIT+CLZ instruction pair"
+  usage: |
+    n% = CTZ(value%)
+
+  example: |
+    PRINT CTZ(1)        ' 0
+    PRINT CTZ(8)        ' 3 (8 = 1000b)
+    PRINT CTZ(&H80)     ' 7
+
+POPCNT:
+  category: bit_manipulation
+  desc: "Population count — count the number of set (1) bits. Uses ARM64 NEON CNT instruction."
+  usage: |
+    n% = POPCNT(value%)
+
+  example: |
+    PRINT POPCNT(&HFF)      ' 8
+    PRINT POPCNT(&H55)      ' 4 (01010101b)
+
+BITREV:
+  category: bit_manipulation
+  desc: "Reverse all bits — ARM64 RBIT instruction"
+  usage: |
+    result% = BITREV(value%)
+
+  example: |
+    ' Reverse bit order:
+    PRINT HEX$(BITREV(1))   ' 8000000000000000
+
+BYTEREV:
+  category: bit_manipulation
+  desc: "Reverse byte order (64-bit endian swap) — ARM64 REV instruction. Reverses all 8 bytes of the 64-bit integer value."
+  usage: |
+    result% = BYTEREV(value%)
+
+  example: |
+    PRINT HEX$(BYTEREV(&H0102030405060708))  ' 0807060504030201
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Array Reductions
+#  Functions that reduce a whole array to a single scalar value.
+#  Uses SIMD/vectorized code paths when available.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+SUM:
+  category: array_reduction
+  desc: "Sum of all elements in an array — SIMD-accelerated whole-array reduction"
+  usage: |
+    result# = SUM(A())
+    ' Sum a DOUBLE array:
+    DIM A(4) AS DOUBLE
+    A(0) = 1.0 : A(1) = 2.0 : A(2) = 3.0 : A(3) = 4.0 : A(4) = 5.0
+    PRINT SUM(A())          ' prints 15
+    ' Sum an INTEGER array:
+    DIM B(3) AS INTEGER
+    B(0) = 10 : B(1) = 20 : B(2) = 30 : B(3) = 40
+    PRINT SUM(B())          ' prints 100
+
+  example: |
+    DIM vals(5) AS DOUBLE
+    vals(1) = 1.0 : vals(2) = 2.0 : vals(3) = 3.0 : vals(4) = 4.0 : vals(5) = 5.0
+    PRINT SUM(vals())    ' 15
+
+
+AVG:
+  category: array_reduction
+  desc: "Average (arithmetic mean) of all elements in an array — SIMD-accelerated"
+  usage: |
+    result# = AVG(A())
+    ' Compute the mean of a DOUBLE array:
+    DIM A(4) AS DOUBLE
+    A(0) = 1.0 : A(1) = 2.0 : A(2) = 3.0 : A(3) = 4.0 : A(4) = 5.0
+    PRINT AVG(A())          ' prints 3
+    ' Works with INTEGER arrays (integer division):
+    DIM B(3) AS INTEGER
+    B(0) = 10 : B(1) = 20 : B(2) = 30 : B(3) = 40
+    PRINT AVG(B())          ' prints 25
+
+  example: |
+    DIM vals(4) AS DOUBLE
+    vals(1) = 10.0 : vals(2) = 20.0 : vals(3) = 30.0 : vals(4) = 40.0
+    PRINT AVG(vals())    ' 25
+
+
+DOT:
+  category: array_reduction
+  desc: "Dot product of two arrays — SIMD-accelerated sum of element-wise products"
+  usage: |
+    result# = DOT(A(), B())
+
+  example: |
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    A(1) = 1.0 : A(2) = 2.0 : A(3) = 3.0
+    B(1) = 4.0 : B(2) = 5.0 : B(3) = 6.0
+    PRINT DOT(A(), B())     ' prints 32 (1*4 + 2*5 + 3*6)
+
+PRODUCT:
+  category: array_reduction
+  desc: "Product of all elements in an array — SIMD-accelerated whole-array reduction"
+  usage: |
+    result# = PRODUCT(A())
+
+  example: |
+    DIM vals(4) AS DOUBLE
+    vals(1) = 1.0 : vals(2) = 2.0 : vals(3) = 3.0 : vals(4) = 4.0
+    PRINT PRODUCT(vals())    ' 24
+
+
+NORM:
+  category: array_reduction
+  desc: "Euclidean norm (magnitude) of an array — sqrt(sum of squares)"
+  usage: |
+    result# = NORM(A())
+
+  example: |
+    DIM v(3) AS DOUBLE
+    v(1) = 3.0 : v(2) = 4.0 : v(3) = 0.0
+    PRINT NORM(v())    ' 5  (classic 3-4-5 triangle)
+
+
+COUNT:
+  category: array_reduction
+  desc: "Number of elements in an array"
+  usage: |
+    result% = COUNT(A())
+
+  example: |
+    DIM nums(5) AS INTEGER
+    PRINT COUNT(nums())    ' 5
+
+
+SUMSQ:
+  category: array_reduction
+  desc: "Sum of squares of all elements — SIMD-accelerated reduction"
+  usage: |
+    result# = SUMSQ(A())
+
+  example: |
+    DIM A(3) AS DOUBLE
+    A(1) = 1.0 : A(2) = 2.0 : A(3) = 3.0
+    PRINT SUMSQ(A())        ' prints 14 (1+4+9)
+
+RMS:
+  category: array_reduction
+  desc: "Root mean square — SIMD-accelerated sqrt(sum of squares / count)"
+  usage: |
+    result# = RMS(A())
+
+  example: |
+    DIM A(4) AS DOUBLE
+    A(1) = 1.0 : A(2) = 2.0 : A(3) = 3.0 : A(4) = 4.0
+    PRINT RMS(A())           ' prints 2.7386 (sqrt(30/4))
+
+RANGE:
+  category: array_reduction
+  desc: "Range of an array (max - min) — single-pass with two accumulators"
+  usage: |
+    result = RANGE(A())
+
+  example: |
+    DIM vals(5) AS DOUBLE
+    vals(1) = 3.0 : vals(2) = 7.0 : vals(3) = 1.0 : vals(4) = 9.0 : vals(5) = 4.0
+    PRINT RANGE(vals())    ' 8  (max 9 - min 1)
+
+ANY:
+  category: array_reduction
+  desc: "Returns 1 if any element is non-zero, else 0 — short-circuits on first match"
+  usage: |
+    result% = ANY(A())
+
+  example: |
+    DIM flags(4) AS INTEGER
+    flags() = 0
+    flags(2) = 1
+    IF ANY(flags()) THEN PRINT "something set" ELSE PRINT "all clear"
+    ' short-circuits: stops at flags(2), never reads flags(3) or flags(4)
+
+ALL:
+  category: array_reduction
+  desc: "Returns 1 if all elements are non-zero, else 0 — short-circuits on first zero"
+  usage: |
+    result% = ALL(A())
+
+  example: |
+    DIM filled(4) AS INTEGER
+    filled() = 1
+    PRINT ALL(filled())     ' 1
+    filled(3) = 0
+    PRINT ALL(filled())     ' 0
+
+  example: |
+    DIM ready(3) AS INTEGER
+    ready() = 1
+    IF ALL(ready()) THEN PRINT "all ready" ELSE PRINT "not ready"
+    ' short-circuits: stops at first zero, skips the rest
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Math Functions
+#  Scalar math functions that also work element-wise on whole arrays.
+#  When passed A(), they return a new array with the function applied
+#  to every element, using SIMD vectorization.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+SIN:
+  category: math
+  desc: "Sine — scalar or element-wise on a whole array"
+  usage: |
+    result# = SIN(angle#)
+    ' Element-wise on an array:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    A(0) = 0.0 : A(1) = 1.5708 : A(2) = 3.1416 : A(3) = 4.7124
+    B() = SIN(A())
+    ' B() is now {0.0, 1.0, 0.0, -1.0}
+
+  example: |
+    DIM pi AS DOUBLE
+    pi = 3.14159265358979
+    PRINT SIN(0.0)          ' 0
+    PRINT SIN(pi / 6.0)     ' 0.5
+    PRINT SIN(pi / 2.0)     ' 1
+    PRINT SIN(pi)           ' ~0 (tiny floating-point residual)
+
+
+COS:
+  category: math
+  desc: "Cosine — scalar or element-wise on a whole array"
+  usage: |
+    result# = COS(angle#)
+    ' Element-wise on an array:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    B() = COS(A())
+
+  example: |
+    DIM pi AS DOUBLE
+    pi = 3.14159265358979
+    PRINT COS(0.0)          ' 1
+    PRINT COS(pi / 3.0)     ' 0.5
+    PRINT COS(pi / 2.0)     ' ~0
+    PRINT COS(pi)           ' -1
+
+
+TAN:
+  category: math
+  desc: "Tangent — scalar or element-wise on a whole array"
+  usage: |
+    result# = TAN(angle#)
+    ' Element-wise on an array:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    B() = TAN(A())
+
+  example: |
+    DIM pi AS DOUBLE
+    pi = 3.14159265358979
+    PRINT TAN(0.0)           ' 0
+    PRINT TAN(pi / 4.0)      ' 1
+    PRINT TAN(pi / 6.0)      ' 0.57735...
+
+
+ATN:
+  category: math
+  desc: "Arctangent — scalar or element-wise on a whole array"
+  usage: |
+    result# = ATN(value#)
+    ' Element-wise on an array:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    B() = ATN(A())
+
+  example: |
+    DIM pi AS DOUBLE
+    ' ATN(1) * 4 gives pi:
+    pi = ATN(1.0) * 4.0
+    PRINT pi                  ' 3.14159265358979
+    PRINT ATN(0.0)            ' 0
+    PRINT ATN(1.0)            ' 0.785... (pi/4)
+
+
+EXP:
+  category: math
+  desc: "Exponential (e^x) — scalar or element-wise on a whole array"
+  usage: |
+    result# = EXP(x#)
+    ' Element-wise on an array:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    A(0) = 0.0 : A(1) = 1.0 : A(2) = 2.0 : A(3) = 3.0
+    B() = EXP(A())
+    ' B() is now {1.0, 2.7183, 7.3891, 20.0855}
+
+  example: |
+    PRINT EXP(0.0)    ' 1
+    PRINT EXP(1.0)    ' 2.71828... (e)
+    PRINT EXP(2.0)    ' 7.38906...
+    ' e^x and LOG are inverses:
+    PRINT EXP(LOG(5.0))   ' ~5
+
+
+LOG:
+  category: math
+  desc: "Natural logarithm — scalar or element-wise on a whole array"
+  usage: |
+    result# = LOG(x#)
+    ' Element-wise on an array:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    A(0) = 1.0 : A(1) = 2.7183 : A(2) = 7.3891 : A(3) = 20.0855
+    B() = LOG(A())
+    ' B() is now {0.0, 1.0, 2.0, 3.0}
+
+  example: |
+    PRINT LOG(1.0)           ' 0
+    PRINT LOG(2.71828)       ' ~1  (natural log of e)
+    PRINT LOG(100.0) / LOG(10.0)   ' 2  (log base 10 via change of base)
+
+
+SQR:
+  category: math
+  desc: "Square root — scalar or element-wise on a whole array"
+  usage: |
+    result# = SQR(x#)
+    ' Element-wise on an array:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    A(0) = 1.0 : A(1) = 4.0 : A(2) = 9.0 : A(3) = 16.0
+    B() = SQR(A())
+    ' B() is now {1.0, 2.0, 3.0, 4.0}
+
+  example: |
+    PRINT SQR(25.0)    ' 5
+    PRINT SQR(2.0)     ' 1.4142135623731
+    ' Hypotenuse of a 3-4-5 triangle:
+    DIM a AS DOUBLE
+    DIM b AS DOUBLE
+    a = 3.0 : b = 4.0
+    PRINT SQR(a * a + b * b)    ' 5
+
+
+ABS:
+  category: math
+  desc: "Absolute value — scalar or element-wise on a whole array"
+  usage: |
+    result = ABS(x)
+    ' Works with DOUBLE and INTEGER:
+    PRINT ABS(-5.0)          ' prints 5
+    ' Element-wise on an array:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    A(0) = -3.0 : A(1) = 2.0 : A(2) = -1.0 : A(3) = 0.0
+    B() = ABS(A())
+    ' B() is now {3.0, 2.0, 1.0, 0.0}
+
+  example: |
+    PRINT ABS(-42)      ' 42
+    PRINT ABS(3.14)     ' 3.14
+    PRINT ABS(-0.001)   ' 0.001
+    ' Useful for distance calculations:
+    DIM a AS DOUBLE
+    DIM b AS DOUBLE
+    a = 7.5 : b = 3.0
+    PRINT "Distance: "; ABS(a - b)   ' 4.5
+
+
+SGN:
+  category: math
+  desc: "Sign function (-1, 0, or 1) — scalar or element-wise on a whole array"
+  usage: |
+    result% = SGN(x)
+    ' Returns -1 for negative, 0 for zero, 1 for positive:
+    PRINT SGN(-5.0)          ' prints -1
+    PRINT SGN(0.0)           ' prints 0
+    PRINT SGN(3.0)           ' prints 1
+    ' Element-wise on an array:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    B() = SGN(A())
+
+  example: |
+    PRINT SGN(-5)    ' -1
+    PRINT SGN(0)     '  0
+    PRINT SGN(3)     '  1
+    PRINT SGN(-0.001) ' -1
+
+
+CDBL:
+  category: math
+  desc: "Convert to DOUBLE — scalar or element-wise on a whole array"
+  usage: |
+    result# = CDBL(x%)
+    ' Convert INTEGER array to DOUBLE element-wise:
+    DIM A(3) AS INTEGER
+    DIM B(3) AS DOUBLE
+    A(0) = 1 : A(1) = 2 : A(2) = 3 : A(3) = 4
+    B() = CDBL(A())
+
+  example: |
+    DIM n AS INTEGER
+    n = 7
+    PRINT CDBL(n)          ' 7
+    PRINT CDBL(255) / 2.0  ' 127.5  (integer division avoided)
+    ' Without CDBL, integer / integer truncates:
+    PRINT 7 / 2            ' 3  (integer division)
+    PRINT CDBL(7) / 2.0    ' 3.5
+
+
+CINT:
+  category: math
+  desc: "Convert to INTEGER — scalar or element-wise on a whole array"
+  usage: |
+    result% = CINT(x#)
+    ' Convert DOUBLE array to INTEGER element-wise:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS INTEGER
+    A(0) = 1.7 : A(1) = 2.3 : A(2) = 3.9 : A(3) = 4.1
+    B() = CINT(A())
+
+  example: |
+    PRINT CINT(3.7)     ' 3   (truncates toward zero)
+    PRINT CINT(3.2)     ' 3
+    PRINT CINT(-2.9)    ' -2  (truncates toward zero)
+    PRINT CINT(2.0)     ' 2
+
+
+CMPLX:
+  category: math
+  desc: "Construct a COMPLEX value from real and imaginary parts"
+  usage: |
+    z = CMPLX(real_part#, imag_part#)
+    DIM z AS COMPLEX
+    z = CMPLX(0.5, -1.25)
+
+  example: |
+    DIM z AS COMPLEX
+    z = CMPLX(3.0, 4.0)
+    PRINT REAL(z)    ' 3
+    PRINT IMAG(z)    ' 4
+
+
+REAL:
+  category: math
+  desc: "Returns the real part of a COMPLEX value"
+  usage: |
+    x# = REAL(z)
+    DIM z AS COMPLEX
+    z = CMPLX(2.0, -5.0)
+    PRINT REAL(z)    ' 2
+
+  example: |
+    DIM a AS COMPLEX
+    DIM b AS COMPLEX
+    a = CMPLX(1.0, 2.0)
+    b = CMPLX(3.0, 4.0)
+    PRINT REAL(a + b)   ' 4
+
+
+IMAG:
+  category: math
+  desc: "Returns the imaginary part of a COMPLEX value"
+  usage: |
+    y# = IMAG(z)
+    DIM z AS COMPLEX
+    z = CMPLX(2.0, -5.0)
+    PRINT IMAG(z)    ' -5
+
+  example: |
+    DIM z AS COMPLEX
+    z = CMPLX(1.5, 0.25)
+    PRINT IMAG(z)    ' 0.25
+
+
+CONJ:
+  category: math
+  desc: "Returns the complex conjugate (negates the imaginary part)"
+  usage: |
+    w = CONJ(z)
+    DIM z AS COMPLEX
+    z = CMPLX(2.0, -3.0)
+    PRINT REAL(CONJ(z)), IMAG(CONJ(z))   ' 2, 3
+
+  example: |
+    DIM z AS COMPLEX
+    DIM w AS COMPLEX
+    z = CMPLX(1.5, 0.25)
+    w = CONJ(z)
+    PRINT REAL(w)   ' 1.5
+    PRINT IMAG(w)   ' -0.25
+
+
+ABSZ:
+  category: math
+  desc: "Returns the magnitude (modulus) of a COMPLEX value"
+  usage: |
+    m# = ABSZ(z)
+    DIM z AS COMPLEX
+    z = CMPLX(3.0, 4.0)
+    PRINT ABSZ(z)   ' 5
+
+  example: |
+    DIM z AS COMPLEX
+    z = CMPLX(6.0, 8.0)
+    PRINT ABSZ(z)   ' 10
+
+
+ARG:
+  category: math
+  desc: "Returns the phase angle of a COMPLEX value in radians"
+  usage: |
+    theta# = ARG(z)
+    DIM z AS COMPLEX
+    z = CMPLX(0.0, 1.0)
+    PRINT ARG(z)    ' ~1.57079632679 (pi/2)
+
+  example: |
+    DIM z AS COMPLEX
+    z = CMPLX(-1.0, 0.0)
+    PRINT ARG(z)    ' ~3.14159265359 (pi)
+
+
+POLAR:
+  category: math
+  desc: "Constructs a COMPLEX value from polar coordinates (radius, angle)"
+  usage: |
+    z = POLAR(r#, theta#)
+    DIM z AS COMPLEX
+    z = POLAR(2.0, 0.0)
+    PRINT REAL(z), IMAG(z)   ' 2, 0
+
+  example: |
+    DIM z AS COMPLEX
+    z = POLAR(1.0, 1.57079632679)
+    PRINT REAL(z)   ' ~0
+    PRINT IMAG(z)   ' ~1
+
+
+CLAMP:
+  category: math
+  desc: "Clamp value to range — scalar or element-wise on a whole array"
+  usage: |
+    result# = CLAMP(value#, lo#, hi#)
+    ' Scalar: clamp a value to [0, 10]:
+    PRINT CLAMP(15.0, 0.0, 10.0)   ' prints 10
+    PRINT CLAMP(-5.0, 0.0, 10.0)   ' prints 0
+    PRINT CLAMP(5.0, 0.0, 10.0)    ' prints 5
+    ' Element-wise: clamp all array values to [0, 1]:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    A(0) = -0.5 : A(1) = 0.5 : A(2) = 1.5 : A(3) = 0.8
+    B() = CLAMP(A(), 0.0, 1.0)
+    ' B() is now {0.0, 0.5, 1.0, 0.8}
+
+  example: |
+    PRINT CLAMP(15.0, 0.0, 10.0)    ' 10  (too high — clamped)
+    PRINT CLAMP(-5.0, 0.0, 10.0)    ' 0   (too low — clamped)
+    PRINT CLAMP(5.0, 0.0, 10.0)     ' 5   (in range)
+    ' Clamp a volume level to [0, 1]:
+    DIM vol AS DOUBLE
+    vol = 1.35
+    vol = CLAMP(vol, 0.0, 1.0)
+    PRINT vol    ' 1
+
+
+LERP:
+  category: math
+  desc: "Linear interpolation — scalar or element-wise on whole arrays"
+  usage: |
+    result# = LERP(a#, b#, t#)
+    ' Scalar: interpolate between two values:
+    PRINT LERP(0.0, 10.0, 0.5)     ' prints 5
+    PRINT LERP(10.0, 20.0, 0.25)   ' prints 12.5
+    ' Element-wise: interpolate between two arrays:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    DIM C(3) AS DOUBLE
+    C() = LERP(A(), B(), 0.5)
+    ' t=0 returns A(), t=1 returns B()
+
+  example: |
+    PRINT LERP(0.0, 100.0, 0.0)     ' 0    (t=0 → start)
+    PRINT LERP(0.0, 100.0, 1.0)     ' 100  (t=1 → end)
+    PRINT LERP(0.0, 100.0, 0.5)     ' 50   (midpoint)
+    PRINT LERP(10.0, 20.0, 0.25)    ' 12.5
+    ' Fade from 0 to 255 in 4 steps:
+    DIM i AS INTEGER
+    FOR i = 0 TO 4
+        PRINT LERP(0.0, 255.0, i / 4.0)
+    NEXT i
+
+
+MIN:
+  category: math
+  desc: "Minimum — scalar or element-wise minimum of two arrays"
+  usage: |
+    result = MIN(a, b)
+    ' Scalar: minimum of two values:
+    PRINT MIN(3, 7)          ' prints 3
+    ' Element-wise: per-element minimum of two arrays:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    DIM C(3) AS DOUBLE
+    A(0) = 1.0 : A(1) = 5.0 : A(2) = 3.0 : A(3) = 8.0
+    B(0) = 4.0 : B(1) = 2.0 : B(2) = 6.0 : B(3) = 1.0
+    C() = MIN(A(), B())
+    ' C() is now {1.0, 2.0, 3.0, 1.0}
+
+  example: |
+    PRINT MIN(3, 7)      ' 3
+    PRINT MIN(7, 3)      ' 3
+    PRINT MIN(-1, -5)    ' -5
+    ' Clamp a value to a maximum:
+    DIM speed AS DOUBLE
+    speed = 150.0
+    speed = MIN(speed, 100.0)
+    PRINT speed    ' 100
+
+
+MAX:
+  category: math
+  desc: "Maximum — scalar or element-wise maximum of two arrays"
+  usage: |
+    result = MAX(a, b)
+    ' Scalar: maximum of two values:
+    PRINT MAX(3, 7)          ' prints 7
+    ' Element-wise: per-element maximum of two arrays:
+    DIM A(3) AS DOUBLE
+    DIM B(3) AS DOUBLE
+    DIM C(3) AS DOUBLE
+    A(0) = 1.0 : A(1) = 5.0 : A(2) = 3.0 : A(3) = 8.0
+    B(0) = 4.0 : B(1) = 2.0 : B(2) = 6.0 : B(3) = 1.0
+    C() = MAX(A(), B())
+    ' C() is now {4.0, 5.0, 6.0, 8.0}
+
+  example: |
+    PRINT MAX(3, 7)      ' 7
+    PRINT MAX(7, 3)      ' 7
+    PRINT MAX(-1, -5)    ' -1
+    ' Ensure a value meets a minimum:
+    DIM health AS INTEGER
+    health = -10
+    health = MAX(health, 0)
+    PRINT health    ' 0
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Array Sorting and Indexing
+#  In-place sort and argsort (indirect sort) for typed arrays.
+#  Operates on the user-visible portion of the array: elements 1..N for DIM a(N).
+# ═══════════════════════════════════════════════════════════════════════════════
+
+QSORT:
+  category: array_sort
+  desc: "Sorts an array in-place using quicksort. Accepts optional ASCENDING (default) or DESCENDING keyword. Works on INTEGER, DOUBLE, and STRING arrays"
+  usage: |
+    QSORT(a())                  ' ascending — lowest first (default)
+    QSORT(a(), DESCENDING)      ' descending — highest first
+    QSORT(a(), ASCENDING)       ' explicit ascending
+    ' Integer example:
+    DIM scores(5) AS INTEGER
+    scores(1) = 42 : scores(2) = 7 : scores(3) = 19 : scores(4) = 3 : scores(5) = 55
+    QSORT(scores())
+    PRINT scores(1)             ' 3  (smallest)
+    PRINT scores(5)             ' 55 (largest)
+    QSORT(scores(), DESCENDING)
+    PRINT scores(1)             ' 55 (largest)
+    ' String example:
+    DIM names(3) AS STRING
+    names(1) = "Charlie" : names(2) = "Alice" : names(3) = "Bob"
+    QSORT(names())
+    PRINT names(1)              ' Alice
+
+  example: |
+    DIM scores(5) AS INTEGER
+    scores(1) = 42 : scores(2) = 7 : scores(3) = 19 : scores(4) = 3 : scores(5) = 55
+    QSORT(scores())
+    FOR i = 1 TO 5
+        PRINT scores(i)    ' 3, 7, 19, 42, 55
+    NEXT i
+    QSORT(scores(), DESCENDING)
+    PRINT scores(1)        ' 55 (largest first)
+
+
+INDEX:
+  category: array_sort
+  desc: "Fills a destination INTEGER array with the 1-based positions of source elements in sorted order (argsort). The source array is NOT modified. Accepts optional ASCENDING (default) or DESCENDING keyword. Works on INTEGER, DOUBLE, and STRING source arrays"
+  usage: |
+    INDEX(src(), dst())                  ' dst holds positions sorted ascending
+    INDEX(src(), dst(), DESCENDING)      ' dst holds positions sorted descending
+    ' dst(i) is the position in src of the i-th smallest element.
+    ' Use it to traverse src in sorted order without reordering it:
+    DIM prices(4) AS DOUBLE
+    prices(1) = 9.99 : prices(2) = 4.49 : prices(3) = 14.99 : prices(4) = 1.99
+    DIM order(4) AS INTEGER
+    INDEX(prices(), order())
+    FOR i = 1 TO 4
+        PRINT prices(order(i))   ' 1.99, 4.49, 9.99, 14.99
+    NEXT i
+    ' Ranking — sort by score, keep original positions:
+    DIM score(6) AS INTEGER
+    DIM rank(6) AS INTEGER
+    INDEX(score(), rank(), DESCENDING)
+    PRINT "Top scorer was at position "; rank(1)
+
+  example: |
+    DIM prices(4) AS DOUBLE
+    prices(1) = 9.99 : prices(2) = 4.49 : prices(3) = 14.99 : prices(4) = 1.99
+    DIM order(4) AS INTEGER
+    INDEX(prices(), order())
+    FOR i = 1 TO 4
+        PRINT prices(order(i))    ' 1.99, 4.49, 9.99, 14.99
+    NEXT i
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  GUI — Windows, Menus, Dialogs
+# ═══════════════════════════════════════════════════════════════════════════════
+
+WINDOW:
+  category: gui_window
+  desc: "Creates and manages non-modal windows with declarative controls"
+  usage: |
+    WINDOW DEFINE win_id, "Title", x, y, width, height
+      WINDOW LABEL ctl_id, "Text", x, y, w, h
+      WINDOW BUTTON ctl_id, "Text", x, y, w, h
+      WINDOW TEXTFIELD ctl_id, "Text", x, y, w, h
+      WINDOW TEXTAREA ctl_id, "Text", x, y, w, h
+      WINDOW COMBOBOX ctl_id, "Opt1|Opt2", x, y, w, h
+      WINDOW TOOLBAR ctl_id, "Button1|Button2", x, y, w, h
+      WINDOW STATUSBAR ctl_id, "Left|Middle|Right", x, y, w, h
+      WINDOW POPUP ctl_id, "Opt1|Opt2", x, y, w, h
+      WINDOW SLIDER ctl_id, min, max, x, y, w, h
+      WINDOW PROGRESS ctl_id, min, max, x, y, w, h
+      WINDOW SECUREFIELD ctl_id, "Placeholder", x, y, w, h
+      WINDOW CHECKBOX ctl_id, "Label", x, y, w, h
+    END WINDOW
+    WINDOW SHOW win_id
+    ' Poll events (either struct form or out-params):
+    WINDOW EVENT win_id AS ev
+    status = WINDOW EVENT(win, ctl)
+    IF WINDOW CLOSED(win_id) THEN ...
+    WINDOW CLOSE win_id
+    WINDOW SHUTDOWN
+
+WINDOW CANVAS:
+  category: gui_window
+  desc: "Batches retained drawing commands into a window canvas control"
+  usage: |
+    WINDOW CANVAS BEGIN win_id, canvas_ctl_id
+      PAPER r, g, b, a
+      CLEAR
+      COLOR r, g, b, a
+      LINE x1, y1, x2, y2
+      PATH MOVE x, y
+      PATH ...
+      PATH STROKE
+    WINDOW CANVAS END
+    WINDOW CANVAS VIRTUALSIZE win_id, canvas_ctl_id, virtual_w, virtual_h
+    WINDOW CANVAS VIEWPORT win_id, canvas_ctl_id, x, y
+    WINDOW CANVAS RESOLUTION win_id, canvas_ctl_id, width, height
+
+WINDOW IMAGE:
+  category: gui_image
+  desc: "Creates and updates offscreen images using canvas-style drawing commands"
+  usage: |
+    WINDOW IMAGE CREATE image_id, width, height [, format]
+    WINDOW IMAGE DEFINE image_id, width, height [, format]
+    WINDOW IMAGE BEGIN image_id
+      PAPER r, g, b, a
+      CLEAR
+      COLOR r, g, b, a
+      LINE x1, y1, x2, y2
+      RECT x, y, w, h, filled
+      ARC cx, cy, r, a0, a1, filled
+      PATH MOVE x, y
+      PATH ...
+      PATH STROKE
+    WINDOW IMAGE END
+    WINDOW IMAGE DESTROY image_id
+    WINDOW IMAGE CLEAR
+    WINDOW IMAGE SAVE image_id, "file.png"
+    WINDOW IMAGE EFFECT image_id, "FXAA", p1, p2 [, p3, p4]
+
+IMAGE:
+  category: gui_image
+  desc: "Image operation aliases for save and post-processing effects"
+  usage: |
+    IMAGE SAVE image_id, "file.png"
+    IMAGE EFFECT image_id, "FXAA", p1, p2 [, p3, p4]
+    IMAGE EFFECT image_id, "BLUR", radius, iterations
+    IMAGE EFFECT image_id, "GRAYSCALE" [, amount_0_to_1]
+    IMAGE EFFECT image_id, "SEPIA" [, amount_0_to_1]
+    IMAGE EFFECT image_id, "INVERT" [, amount_0_to_1]
+    IMAGE EFFECT image_id, "BRIGHTNESS", delta_-1_to_1
+    IMAGE EFFECT image_id, "CONTRAST", factor_0_to_4   ' 1.0 = unchanged
+    IMAGE EFFECT image_id, "SATURATION", factor_0_to_4 ' 1.0 = unchanged
+    IMAGE EFFECT image_id, "SHARPEN" [, amount_0_to_3]
+    IMAGE EFFECT image_id, "GAMMA", gamma_0.1_to_5     ' 1.0 = unchanged
+    IMAGE EFFECT image_id, "VIGNETTE" [, strength_0_to_1, softness_0.2_to_6]
+    IMAGE EFFECT image_id, "EDGE" [, strength_0.1_to_4, threshold_0_to_1]
+    IMAGE EFFECT image_id, "EDGEDETECT" [, strength_0.1_to_4, threshold_0_to_1]
+    IMAGE EFFECT image_id, "POSTERIZE", levels_2_to_64
+
+WINDOW SET TEXT:
+  category: gui_window
+  desc: "Sets the text of a window control (label, text field, textarea, combo/popup selection label). Status bars accept left/middle/right segments (write-only)."
+  usage: |
+    WINDOW SET TEXT win_id, ctl_id, "Hello"
+    WINDOW SET TEXT win_id, ctl_id, left$, middle$, right$   ' status bar segments
+    txt$ = WINDOW TEXT$(win_id, ctl_id)
+    txt$ = WINDOW GET TEXT win_id, ctl_id
+
+WINDOW SET VALUE:
+  category: gui_window
+  desc: "Sets or reads numeric control values (slider, progress, combo/popup index)"
+  usage: |
+    WINDOW SET VALUE win_id, ctl_id, value
+    v = WINDOW VALUE(win_id, ctl_id)
+    v = WINDOW GET VALUE win_id, ctl_id
+
+WINDOW SET TITLE:
+  category: gui_window
+  desc: "Changes a window's title bar text at runtime"
+  usage: |
+    WINDOW SET TITLE win_id, "New Title"
+
+WINDOW CHECKED:
+  category: gui_window
+  desc: "Reads checkbox state"
+  usage: |
+    is_on = WINDOW CHECKED(win_id, ctl_id)
+
+MENU:
+  category: gui_menu
+  desc: "Defines a native menu bar and handles menu events"
+  usage: |
+    MENU DEFINE
+      MENU "File"
+        ITEM 100, "Open", "Cmd+O"
+        ITEM 101, "Quit", "Cmd+Q"
+        SEPARATOR
+        ITEM 102, "Toggle", "", CHECKED
+      END MENU
+    END DEFINE
+    ev = MENU EVENT()
+    MENU CHECK item_id, 0 or 1
+    MENU RESET
+
+DIALOG:
+  category: gui_dialog
+  desc: "Builds and shows modal native dialogs with controls"
+  usage: |
+    DIALOG DEFINE dlg_id
+      TITLE "Dialog Title"
+      MESSAGE "Message text"
+      LABEL "Static text"
+      NUMBERFIELD 10, "Label", initial, min, max
+      DROPDOWN 20, "Label", "Opt1|Opt2", default_index
+      CHECKBOX 30, "Label", CHECKED
+      BUTTON 1, "OK", DEFAULT
+      BUTTON 2, "Cancel", CANCEL
+    END DEFINE
+
+    DIALOG SETTEXT 10, "updated"
+    DIALOG SETNUMBER 10, 123.45
+    DIALOG SETSELECTION 20, 0
+    DIALOG SETCHECKED 30, 1
+    choice = DIALOG SHOW(dlg_id)
+    txt$ = DIALOG TEXT$(10)
+    sel  = DIALOG SELECTION(20)
+    on   = DIALOG CHECKED(30)
+    DIALOG RESET
+
